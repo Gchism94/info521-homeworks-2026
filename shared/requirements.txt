@@ -1,0 +1,13 @@
+# Shared dependency baseline for INFO 521 homeworks.
+# numpy is pinned to remove the cross-version RNG-stream risk flagged in docs/REVIEW.md
+# (S2/S6). TODO: freeze to the exact patch version used by CI once chosen.
+numpy==2.1.*
+jupyter
+jupytext
+pytest
+pylint
+matplotlib
+# Some assignments also need:
+#   tqdm        (hw16)
+#   scipy       (hw11 overhaul: scipy.special / scipy.stats reference checks)
+# Per-assignment requirements.txt files are the source of truth; this is the superset.

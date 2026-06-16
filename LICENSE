@@ -1,0 +1,13 @@
+LICENSE — PLACEHOLDER, CHOOSE BEFORE PUBLISHING
+
+The original repository did not include a license. Pick one before making this repo public
+or distributing it to students. Common choices for course materials:
+
+  - CC BY-NC-SA 4.0   (typical for educational content; share-alike, non-commercial)
+  - MIT               (permissive; common for the code/autograder portions)
+  - All rights reserved (default if you publish nothing here)
+
+Replace the entire contents of this file with the chosen license text, and update the
+copyright line:
+
+  Copyright (c) 2026 <copyright holder> — University of Arizona INFO 521

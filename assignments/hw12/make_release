@@ -3,5 +3,5 @@
 rm -rf release
 mkdir -p release
 
-make && cp hw.pdf release
+make without_answers && cp hw.pdf release
 cp README.md release

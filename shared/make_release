@@ -1,0 +1,40 @@
+#!/bin/sh
+# Canonical, hardened make_release (audit finding S5).
+#
+# Builds a student-facing release/ for one assignment by stripping solutions:
+#   - Python:  removes lines between '### SOLUTION START ###' and '### SOLUTION END ###'
+#   - LaTeX:   removes lines between '%%% Answer START %%%' and '%%% Answer END %%%'
+#   - Typst:   compiles the ANSWER-FREE PDF by calling `make without_answers` BY NAME
+#              (never relies on it being the Makefile's first/default target).
+#
+# Run from inside an assignment directory.
+set -e
+
+rm -rf release
+mkdir -p release
+
+cp README.md release
+[ -f rubric.md ] && cp rubric.md release          # ship criteria to students (TILT)
+
+# Python code + tests
+if [ -f hw.py ]; then
+    cp requirements.txt release
+    sed '/^ *### SOLUTION START ###/,/^ *### SOLUTION END ###/d' hw.py > release/hw.py
+    cp test_hw.py release
+fi
+
+# LaTeX prompt (answers stripped)
+if [ -f hw.tex ]; then
+    sed '/^ *%%% Answer START %%%/,/^ *%%% Answer END %%%/d' hw.tex > release/hw.tex
+fi
+
+# Typst prompt -> answer-free PDF (S5: explicit target, not positional)
+if [ -f hw.typ ]; then
+    make without_answers && cp hw.pdf release
+fi
+
+# Data needed by the autograder / student
+[ -d data ] && cp -r data release
+for f in *.csv; do [ -f "$f" ] && cp "$f" release; done 2>/dev/null || true
+
+echo "release/ built for $(basename "$(pwd)")"

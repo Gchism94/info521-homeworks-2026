@@ -20,7 +20,7 @@ if [ -f hw.tex ]; then
 fi
 
 if [ -f hw.typ ]; then
-    make && cp hw.pdf release
+    make without_answers && cp hw.pdf release
 fi
 
 if [ -d data ]; then

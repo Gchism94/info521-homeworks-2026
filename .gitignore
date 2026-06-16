@@ -1,0 +1,17 @@
+# Build / generated artifacts
+build/
+release/
+_site/
+.quarto/
+__pycache__/
+*_files/
+.ipynb_checkpoints/
+*.pyc
+
+# LaTeX build dirs
+**/build/
+
+# OS
+.DS_Store
+
+# Generated per-assignment template repos live under build/ (see scripts/make_template_repo.sh)

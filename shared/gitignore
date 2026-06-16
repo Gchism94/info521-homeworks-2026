@@ -1,0 +1,10 @@
+# .gitignore injected into each generated per-assignment template repo.
+release/
+build/
+_site/
+.quarto/
+__pycache__/
+*_files/
+.ipynb_checkpoints/
+*.pyc
+.DS_Store
