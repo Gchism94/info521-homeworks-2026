@@ -16,11 +16,33 @@
 \begin{document}
 \maketitle
 
-\section{MLE for independent samples from Bernoulli distribution}
+\section{MLE for independent samples from the Bernoulli distribution}
 
-\emph{(Adapted from FCML Ex. 2.9)}
+\emph{(Adapted from FCML Ex.~2.9)}
 
-\bigskip
+\subsection*{Context \& purpose}
+
+\noindent The Bernoulli MLE---``the estimate is just the sample
+proportion''---is the simplest instance of a pattern you will repeat all term:
+write a likelihood, maximize its logarithm, and read off the estimator. Doing it
+carefully once here makes the Gaussian, Poisson, and logistic cases mechanical.
+
+\subsection*{Learning objectives}
+
+\noindent By the end of this problem you can:
+\begin{itemize}
+    \item \textbf{O1} Write the likelihood of an i.i.d.\ dataset from its
+        per-sample mass function. \emph{(Bloom: Apply --- Correctness step A)}
+    \item \textbf{O2} Show a log-likelihood has a unique maximum. \emph{(Bloom:
+        Analyze --- Correctness step B)}
+    \item \textbf{O3} Derive the maximum-likelihood estimator in closed form.
+        \emph{(Bloom: Analyze --- Correctness step C)}
+    \item \textbf{O4} Interpret the estimator---why it equals the sample mean,
+        when that holds, and when it misleads. \emph{(Bloom: Evaluate ---
+        Interpretation rubric)}
+\end{itemize}
+
+\subsection*{The problem}
 
 \noindent The Bernoulli distribution can be used to model events with binary outcomes
 (e.g., coin tosses). For a random variable $X$ that can take on two values: 0 or
@@ -31,7 +53,7 @@ P(x|r) = r^x(1-r)^{1-x}
 where $r$ is the probability of $X$ taking on the value 1.
 
 \begin{enumerate}
-    \item Suppose you observe $N$ values $x_i, \dots, x_N$ sampled from the
+    \item Suppose you observe $N$ values $x_1, \dots, x_N$ sampled from the
         Bernoulli distribution. Write down the expression for the likelihood
         $L$ of this dataset, assuming that the samples are independent
         conditioned on $r$.
@@ -41,24 +63,77 @@ where $r$ is the probability of $X$ taking on the value 1.
         for the parameter $r$ in the likelihood $L$.
 \end{enumerate}
 
+\subsection*{What you may and may not use}
+
+\noindent \textbf{Any mathematically valid derivation that reaches the required
+result earns full credit}---there is no privileged path. You may maximize $L$
+directly or maximize $\log L$; you may argue uniqueness by the second-derivative
+(concavity) test, by a strict-concavity argument, or by showing the score
+function has a single sign change on $(0,1)$. You must \emph{show the steps that
+justify each move}: a bare final answer earns credit only for the result step.
+
+\subsection*{How you'll be assessed (criteria shown up front)}
+
+\noindent Grading follows the shared analytic rubric in \texttt{rubric.md}
+(shipped with this assignment), not the old complete/incomplete gate:
+\begin{itemize}
+    \item \textbf{Correctness (60\%)} --- a per-step derivation rubric (setup
+        $\to$ uniqueness $\to$ result); each step earns partial credit on the
+        \emph{validity of the move}, and any sound alternative route to the same
+        result earns full credit.
+    \item \textbf{Interpretation (30\%)} --- the paragraph below, scored
+        Claim / Evidence / Reasoning / Limits (0--3 each).
+    \item \textbf{Process (10\%)} --- clear notation, stated assumptions, and
+        legible justification.
+\end{itemize}
+Under the specifications-grading bundle, ``Derivation = PASS'' requires steps
+A--C each at Proficient or above; otherwise you get one revise-and-resubmit.
+
+\subsection*{Required interpretation}
+
+\noindent After deriving $\hat{r}$, write \textbf{one short paragraph} that:
+(a) explains \emph{why} $\hat{r} = \frac{1}{N}\sum_{i} x_i$ is exactly the
+sample proportion of observed 1's; (b) states the assumptions under which this
+estimator is appropriate; and (c) gives \emph{one} situation where it
+misleads---for example, very small $N$, or all observed outcomes identical so
+that $\hat{r}\in\{0,1\}$.
+
+\subsection*{Going further (optional, ungraded)}
+
+\noindent Place a $\mathrm{Beta}(a,b)$ prior on $r$ and find the MAP estimate.
+Comment on how, for small $N$, the prior pulls the estimate away from the raw
+sample proportion.
+
 %%% Answer START %%%
 \ans{
 \subsection*{Solution}
 
+\noindent\textbf{Assumptions and notation.} The $N$ samples are i.i.d.\ given
+$r$, each $x_i \in \{0,1\}$, and $r \in (0,1)$. Here ``$\log$'' is the natural
+logarithm and all sums run over $i = 1,\dots,N$.
+
 \begin{enumerate}
-    \item $L = \prod_{i = 1}^N r^{x_i}(1 - r)^{1 - x_i}$
+    \item Because the samples are independent conditioned on $r$, the joint
+        likelihood factorizes into the product of the per-sample masses:
+        \[ L = \prod_{i = 1}^N r^{x_i}(1 - r)^{1 - x_i}. \]
     \item
+        Maximizing $L$ is equivalent to maximizing $\log L$ (the logarithm is
+        strictly increasing), so we work with the log-likelihood:
         \begin{align}
             \log L &= \sum_{i = 1}^N x_i \log r + (1-x_i) \log(1-r)\\
             \implies \frac{\partial}{\partial r}\log L &= \sum_{i = 1}^N \frac{x_i}{r} - \frac{1 - x_i}{1 - r}\\
             \implies \frac{\partial^2}{\partial r^2}\log L &= \sum_{i = 1}^N -\frac{x_i}{r^2}-\frac{1-x_i}{(1 - r)^2}
         \end{align}
 
-        We can see above that $\frac{\partial^2}{\partial r^2}\log L$ is always
-        negative. Each term in the summation must be negative, as $x_i$ can
-        only be 1 or 0, and $0 \leq r \leq  1$. Thus, $L$ has a unique maximum.
+        Every term of the second derivative is strictly negative for
+        $r\in(0,1)$: since each $x_i\in\{0,1\}$, exactly one of the two
+        fractions in each term is nonzero, and it enters with a negative sign.
+        Hence $\log L$ is strictly concave on $(0,1)$, so it has at most one
+        stationary point and any such point is its unique global maximum;
+        therefore $L$ has a unique maximum.
 
     \item
+        Setting the first derivative to zero at $r = \hat{r}$ and solving:
         \begin{align}
             \left.\frac{\partial \log L}{\partial r}\right|_{r = \hat{r}} &= 0\\
             \implies \sum_{i = 1}^N \frac{x_i}{\hat{r}} - \frac{1 - x_i}{1 - \hat{r}} &= 0\\
@@ -68,6 +143,18 @@ where $r$ is the probability of $X$ taking on the value 1.
             \implies \hat{r} &= \frac{\sum_i x_i}{N}
         \end{align}
 \end{enumerate}
+
+\medskip
+\noindent\textbf{Interpretation.} The estimator $\hat{r}=\frac{1}{N}\sum_i x_i$
+is the sample proportion of 1's because each $x_i\in\{0,1\}$, so $\sum_i x_i$
+simply counts the observed successes and dividing by $N$ gives their fraction;
+maximizing the Bernoulli likelihood reduces to matching $r$ to the observed
+success rate. This is appropriate when the data really are i.i.d.\ draws from a
+single fixed-$r$ Bernoulli. It misleads when $N$ is very small or when every
+observation is identical: three heads in three tosses give $\hat{r}=1$, asserting
+tails is impossible---an artifact of the tiny sample, not the truth. (A
+$\mathrm{Beta}$ prior / MAP estimate, the optional extension, fixes exactly this
+by pulling the estimate off the boundary.)
 
 }
 %%% Answer END %%%

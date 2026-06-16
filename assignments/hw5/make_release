@@ -7,3 +7,4 @@ mkdir -p release
 sed '/^ *%%% Answer START %%%/,/^ *%%% Answer END %%%/d' hw.tex > release/hw.tex
 
 cp README.md release
+cp rubric.md release

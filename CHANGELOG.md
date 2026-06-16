@@ -33,6 +33,12 @@ Provenance and changes relative to the original
 - Per-assignment overhauls land here as they are approved, pilots first (hw3, hw5, hw16),
   each as its own commit with the diff reviewed and `test_hw.py` run against the reference
   `hw.py`.
+- **Point-split rule (keyed to how correctness is verified):** autograded HWs are **55/35/10**,
+  written/derivation HWs are **60/30/10** (machine-verified correctness → heavier
+  interpretation; human-verified derivation → heavier per-step correctness). See `rubric.md`.
+- **hw5 (pilot, written-derivation):** applied the 8-part prompt + per-step derivation rubric
+  (Correctness 60) + CERL interpretation (30) + Process (10); new `rubric.md`, `make_release`
+  ships it. No autograder; `%%% Answer %%%` markers preserved.
 
 ## Notes
 - GitHub org slug `info521-sp26` is a placeholder from the original `settings.env`; confirm

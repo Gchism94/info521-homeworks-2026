@@ -15,6 +15,10 @@ four dimensions, **0–3** each.
 
 - **Within-assignment weight:** Interpretation is **35%** of code HWs, **30%** of written
   HWs (Correctness 55/60%, Process 10%). See `docs/OVERHAUL_FRAMEWORK.md` §3.
+- **Split rule (keyed to how correctness is verified):** **autograded HWs are 55 / 35 / 10**;
+  **written/derivation HWs are 60 / 30 / 10** — when correctness is *machine*-verified the
+  interpretation layer carries more weight; when it is *human*-verified (a graded derivation),
+  more weight sits in the per-step correctness rubric.
 - **Specifications grading (ratified scheme):** "Interpretation = PASS" requires **≥ 2 on
   every dimension of every prompt**; otherwise one **revise-and-resubmit** window.
 - **LLM pre-grading** may draft per-dimension scores + one-line justifications, **confirmed
