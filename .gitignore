@@ -11,6 +11,10 @@ __pycache__/
 # LaTeX build dirs
 **/build/
 
+# Generated plot artifacts (notebooks/tests write these into each assignment's images/)
+**/images/*.pdf
+**/images/*.png
+
 # OS
 .DS_Store
 

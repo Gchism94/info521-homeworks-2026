@@ -155,24 +155,31 @@ class PolynomialRegressionModel:
 # like.
 
 # %%
-x_predict = np.linspace(min(x), max(x))
 from matplotlib import pyplot as plt
 # %config InlineBackend.figure_format = "retina"
 plt.style.use("ggplot")
 
+# When this file is imported (e.g. by the autograder) rather than run as a notebook or
+# script, `__name__` is not "__main__", so the plotting cells below are skipped and
+# importing `hw` stays fast. Running the notebook in Jupyter, or `python hw.py`, still
+# produces every figure the written component needs.
+_NOTEBOOK = __name__ == "__main__"
+
 # Set the maximum order
 MAX_ORDER = 8
 
-for n in range(1, MAX_ORDER + 1):
-    fig, axes = plt.subplots()
-    axes.plot(x, t, 'o')
-    model = PolynomialRegressionModel(n)
-    model.train(x, t)
-    predictions = model.predict(x_predict)
-    axes.plot(x_predict, predictions, label = f"Polynomial order: {n}")
-    axes.set_xlabel("Year")
-    axes.set_ylabel("Winning Time (s)")
-    plt.legend()
+if _NOTEBOOK:
+    x_predict = np.linspace(min(x), max(x))
+    for n in range(1, MAX_ORDER + 1):
+        fig, axes = plt.subplots()
+        axes.plot(x, t, 'o')
+        model = PolynomialRegressionModel(n)
+        model.train(x, t)
+        predictions = model.predict(x_predict)
+        axes.plot(x_predict, predictions, label = f"Polynomial order: {n}")
+        axes.set_xlabel("Year")
+        axes.set_ylabel("Winning Time (s)")
+        plt.legend()
 
 
 # %% # Scaling [markdown]
@@ -180,10 +187,9 @@ for n in range(1, MAX_ORDER + 1):
 # At some point, you will see the plots start to look weird -- the fits will
 # start to look way off.
 #
-# **Question 1 (1 point)** At which polynomial order do you start to see the
-# fit getting worse?
-#
-# **Answer:** ### YOUR ANSWER HERE ###
+# **Observation.** At some order the fits start to look way off. You will analyze this
+# quantitatively in the **Interpretation** section at the end of the notebook (prompt
+# **I2**), once you have the train/validation losses and the cross-validation curve.
 #
 # Mathematically, the sizes of the values of variables (such as x) could be
 # arbitrarily large.  However, when we go to manipulate those values on a
@@ -287,8 +293,9 @@ def make_scaled_plot(n, x, t):
     # Save the plot to a file in the `images` directory.
     fig.savefig(f"images/polyfit_scaled_{n}.pdf")
 
-for n in range(1, max_order + 1):
-    make_scaled_plot(n, x, t)
+if _NOTEBOOK:
+    for n in range(1, max_order + 1):
+        make_scaled_plot(n, x, t)
 
 
 # %% [markdown]
@@ -341,26 +348,28 @@ def compute_loss(n):
 losses = [compute_loss(n) for n in range(1, 9)]
 
 # %%
-fig, axes = plt.subplots()
-axes.plot(range(1,9), [loss[0] for loss in losses], label="Training loss")
+if _NOTEBOOK:
+    fig, axes = plt.subplots()
+    axes.plot(range(1,9), [loss[0] for loss in losses], label="Training loss")
 
-# Set axis labels
-axes.set_xlabel("Polynomial order")
-axes.set_ylabel("Training loss")
+    # Set axis labels
+    axes.set_xlabel("Polynomial order")
+    axes.set_ylabel("Training loss")
 
-# Save the plot to a file.
-fig.savefig("images/training_loss.pdf")
+    # Save the plot to a file.
+    fig.savefig("images/training_loss.pdf")
 
 # %%
 
 # %%
-fig, axes = plt.subplots()
-axes.plot(range(1,9), [loss[1] for loss in losses], label="Validation loss")
-axes.set_xlabel("Polynomial order")
-axes.set_ylabel("Validation loss")
-axes.set_yscale("log")
-plt.tight_layout()
-fig.savefig("images/validation_loss.pdf")
+if _NOTEBOOK:
+    fig, axes = plt.subplots()
+    axes.plot(range(1,9), [loss[1] for loss in losses], label="Validation loss")
+    axes.set_xlabel("Polynomial order")
+    axes.set_ylabel("Validation loss")
+    axes.set_yscale("log")
+    plt.tight_layout()
+    fig.savefig("images/validation_loss.pdf")
 
 # %% [markdown]
 # The plot above is a bit different from FCML Figure 1.12(b), since the figure
@@ -410,10 +419,8 @@ fig.savefig("images/validation_loss.pdf")
 stack = np.column_stack((x, t))
 
 # %% [markdown]
-# **Question 2:** What do you expect the dimensions of `stack` to be? Now
-# check the dimensions using NumPy's `shape` method. Was your guess correct?
-#
-# **Answer:** ### YOUR ANSWER HERE ###
+# **Quick check (ungraded):** What do you expect the dimensions of `stack` to be?
+# Verify with `stack.shape`.
 
 # %% [markdown]
 # ## Reproducibility and random seed setting
@@ -444,8 +451,9 @@ def run_K_fold_cv(K: int, P: int, data):
         P: Maximum polynomial order
         data: Training data array
     Returns:
-        List of tuples of the form:
-        (mean validation loss over all folds, polynomial order)
+        A length-P 1-D NumPy array; element ``p - 1`` is the mean validation loss
+        (averaged over the K folds) for polynomial order ``p``. This is an output
+        contract used by the autograder -- you may implement the CV however you like.
     """
 
     # Use NumPy's `array_split` method
@@ -541,11 +549,18 @@ def run_K_fold_cv(K: int, P: int, data):
     # Save the figure
     fig.savefig(f"images/{K}_fold_cv_loss.pdf")
 
+    # Return the per-order mean validation losses (output contract; see README section 8).
+    ### YOUR CODE HERE ###
+    ### SOLUTION START ###
+    return mean_validation_losses
+    ### SOLUTION END ###
+
 # %% [markdown]
 # Let us first try running 5-fold cross-validation.
 
 # %%
-run_K_fold_cv(5, 8, stack_shuffled)
+if _NOTEBOOK:
+    run_K_fold_cv(5, 8, stack_shuffled)
 
 # %% [markdown]
 # Now, create a similar plot, but running LOOCV instead of 5-fold CV.
@@ -553,7 +568,8 @@ run_K_fold_cv(5, 8, stack_shuffled)
 # %%
 ### YOUR CODE HERE ###
 ### SOLUTION START ###
-run_K_fold_cv(x.shape[0], 8, stack_shuffled)
+if _NOTEBOOK:
+    run_K_fold_cv(x.shape[0], 8, stack_shuffled)
 ### SOLUTION END ###
 
 # %% [markdown]
@@ -564,6 +580,27 @@ run_K_fold_cv(x.shape[0], 8, stack_shuffled)
 #
 # Note that the end conclusion is the same (that is, a polynomial of order 3
 # works best).
+
+# %% [markdown]
+# # Interpretation (graded by rubric -- see `rubric.md`)
+#
+# Answer each prompt in 2-4 sentences in the cell below. Each is scored on
+# Claim / Evidence / Reasoning / Limits.
+#
+# **I1.** Which polynomial order did cross-validation select, and **why**, in
+# bias-variance terms?
+#
+# **I2.** What do the training-vs-validation loss curves and the cross-validation curve
+# show about **overfitting**? Cite the specific trend you see.
+#
+# **I3.** Name one situation in which cross-validation here could **mislead** you
+# (e.g., very small N, data leakage, non-i.i.d. data), and why.
+
+# %% [markdown]
+# **Your answer:**
+#
+# ### YOUR ANSWER HERE ###
+
 # %%
 
 # %%
