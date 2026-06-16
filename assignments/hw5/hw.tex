@@ -1,0 +1,85 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{graphicx}
+\usepackage{newpxtext}
+\usepackage{eulervm}
+\DeclareMathOperator{\diag}{\mathrm{diag}}
+\DeclareMathOperator{\cov}{\texttt cov}
+\long\def\ans#1{{\color{Blue}{\em #1}}}
+\usepackage[margin=1in]{geometry}
+\title{Homework 5}
+\author{Your name here}
+\date{\today{}}
+
+\begin{document}
+\maketitle
+
+\section{MLE for independent samples from Bernoulli distribution}
+
+\emph{(Adapted from FCML Ex. 2.9)}
+
+\bigskip
+
+\noindent The Bernoulli distribution can be used to model events with binary outcomes
+(e.g., coin tosses). For a random variable $X$ that can take on two values: 0 or
+1, the probability mass function describing the outcome (i.e., the likelihood) is given by
+\begin{align}
+P(x|r) = r^x(1-r)^{1-x}
+\end{align}
+where $r$ is the probability of $X$ taking on the value 1.
+
+\begin{enumerate}
+    \item Suppose you observe $N$ values $x_i, \dots, x_N$ sampled from the
+        Bernoulli distribution. Write down the expression for the likelihood
+        $L$ of this dataset, assuming that the samples are independent
+        conditioned on $r$.
+    \item Show that $L$ has a unique maximum.
+    \item Now that you have shown that $L$ has a unique maximum, derive an
+        expression for the maximum likelihood estimator $\hat{r}$
+        for the parameter $r$ in the likelihood $L$.
+\end{enumerate}
+
+%%% Answer START %%%
+\ans{
+\subsection*{Solution}
+
+\begin{enumerate}
+    \item $L = \prod_{i = 1}^N r^{x_i}(1 - r)^{1 - x_i}$
+    \item
+        \begin{align}
+            \log L &= \sum_{i = 1}^N x_i \log r + (1-x_i) \log(1-r)\\
+            \implies \frac{\partial}{\partial r}\log L &= \sum_{i = 1}^N \frac{x_i}{r} - \frac{1 - x_i}{1 - r}\\
+            \implies \frac{\partial^2}{\partial r^2}\log L &= \sum_{i = 1}^N -\frac{x_i}{r^2}-\frac{1-x_i}{(1 - r)^2}
+        \end{align}
+
+        We can see above that $\frac{\partial^2}{\partial r^2}\log L$ is always
+        negative. Each term in the summation must be negative, as $x_i$ can
+        only be 1 or 0, and $0 \leq r \leq  1$. Thus, $L$ has a unique maximum.
+
+    \item
+        \begin{align}
+            \left.\frac{\partial \log L}{\partial r}\right|_{r = \hat{r}} &= 0\\
+            \implies \sum_{i = 1}^N \frac{x_i}{\hat{r}} - \frac{1 - x_i}{1 - \hat{r}} &= 0\\
+            \implies \frac{1}{\hat{r}}\sum_{i} x_i&=\frac{1}{1 - \hat{r}}\sum_i (1 - x_i)\\
+            \implies (1 - \hat{r})\sum_i x_i &= \hat{r} \sum_i (1 - x_i)\\
+            \implies \sum_i x_i - \hat{r} \sum_i x_i &= N\hat{r} - \hat{r}\sum_i x_i\\
+            \implies \hat{r} &= \frac{\sum_i x_i}{N}
+        \end{align}
+\end{enumerate}
+
+}
+%%% Answer END %%%
+
+
+\section{Workload}
+
+How much time did you spend on this homework assignment outside of class?
+
+\section*{Acknowledgments}
+
+Cite all the people you've worked with on this homework, as well as any other
+resources you used apart from the FCML textbook.
+
+\end{document}

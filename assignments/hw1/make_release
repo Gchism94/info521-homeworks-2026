@@ -1,0 +1,11 @@
+#!/bin/sh
+# Create a release directory
+mkdir -p release
+
+# Strip out the solutions from the code.
+sed '/^ *### SOLUTION START ###/,/^ *### SOLUTION END ###/d' hw.py > release/hw.py
+
+cp data100m.csv release
+cp requirements.txt release
+cp test_hw.py release
+cp README.md release

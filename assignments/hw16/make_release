@@ -1,0 +1,29 @@
+#!/bin/sh
+
+# Remove existing release directory
+rm -rf release
+
+# Create a fresh release directory
+mkdir -p release
+
+# cp .gitignore release  <-- now handled by create_assignment.sh script
+cp README.md release
+
+# Copy code, requirements, and tests, stripping solutions out
+if [ -f hw.py ]; then
+    cp requirements.txt release
+    sed '/^ *### SOLUTION START ###/,/^ *### SOLUTION END ###/d' hw.py > release/hw.py
+    cp test_hw.py release
+fi
+
+if [ -f hw.tex ]; then
+    sed '/^ *%%% Answer START %%%/,/^ *%%% Answer END %%%/d' hw.tex > release/hw.tex
+fi
+
+if [ -f hw.typ ]; then
+    make && cp hw.pdf release
+fi
+
+if [ -d data ]; then
+    cp -r data release
+fi

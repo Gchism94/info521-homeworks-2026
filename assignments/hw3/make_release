@@ -1,0 +1,18 @@
+#!/bin/sh
+
+# Remove existing release directory
+rm -rf release
+
+# Create a fresh release directory
+mkdir -p release
+
+# Strip out the solutions from the code.
+sed '/^ *### SOLUTION START ###/,/^ *### SOLUTION END ###/d' hw.py > release/hw.py
+
+cp data100m.csv release
+cp requirements.txt release
+cp test_hw.py release
+cp hw.tex release
+cp README.md release
+mkdir -p release/images
+cp images/README.md release/images/README.md

@@ -1,0 +1,9 @@
+#!/bin/sh
+# Create a fresh release directory
+rm -rf release
+mkdir -p release
+
+# Strip out the solutions from the code.
+sed '/^ *%%% Answer START %%%/,/^ *%%% Answer END %%%/d' hw.tex > release/hw.tex
+
+cp README.md release

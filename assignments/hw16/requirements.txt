@@ -1,0 +1,7 @@
+numpy
+jupyter
+jupytext
+pytest
+pylint
+matplotlib
+tqdm

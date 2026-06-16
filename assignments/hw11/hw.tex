@@ -1,0 +1,76 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathpazo}
+\usepackage[dvipsnames]{xcolor}
+\usepackage[colorlinks, linkcolor=Blue]{hyperref}
+\usepackage{graphicx}
+\usepackage[margin=1in]{geometry}
+\title{Homework 11}
+\author{Your name here}
+\date{\today{}}
+\newcommand{\w}{\mathbf{w}}
+\newcommand{\what}{\widehat{\w}}
+
+\begin{document}
+\maketitle
+
+\section{Exact posterior for coin game}
+
+Running the script \texttt{hw.py} will call the function \texttt{run\_scenario}
+for each of the three prior scenarios we discussed in class, and this in turn
+will generate for each scenario a plot of the prior and posterior densities for
+$R$. First, fill in the missing pieces of code in \texttt{hw.py}.
+
+Then, in your written solution, include these three plots; describe what the priors
+represent, and explain the differences between the priors and posteriors (why do
+they have the shapes they do). Also explain what makes the posteriors between
+the three scenarios not the same.
+
+%%% Answer START %%%
+\textcolor{RoyalBlue}{Grading: 1 point for a reasonable explanation of what the
+figures represent (as exemplified below).}
+%%% Answer END %%%
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.3\textwidth]{Scenario_1.pdf}
+    \includegraphics[width=0.3\textwidth]{Scenario_2.pdf}
+    \includegraphics[width=0.3\textwidth]{Scenario_3.pdf}
+%%% Answer START %%%
+    \caption{\textcolor{RoyalBlue}{
+        The three figures plot the prior and posterior densities for r under the three
+        different scenarios, but each based on observations of 14 heads ($y_N$) out of 20
+        coin tosses ($N$). (a) Scenario 1 starts with a uniform prior, so the
+        observations have a big impact on the posterior belief, with majority of the
+        density distributed around the ratio of 14 heads out of 20 (peaked at r = 7/10 =
+        0.7); the variance is highest relative to the other two scenarios as the prior
+        is so weak. (b) Scenario 2 has a fairly strong prior belief that the coin is
+        completely fair, so it is peaked over r = 0.5 and the variance is fairly small;
+        the evidence is that there are significantly more heads than tails, so the
+        posterior is naturally pulled to the right, and the variance increases just
+        slightly as the evidence is counter to the original prior belief, but not
+        significantly. (c) Scenario 3 posits a relatively weak prior belief that the
+        coin is biased towards heads. In light of the evidence, the posterior shifts to
+        the right, close but slightly to the right of r = 0.7, and in general the
+        variance has reduced.
+        }
+    }
+    \label{fig:scenarios}
+%%% Answer END %%%
+\end{figure}
+
+\newpage
+
+\section{Workload}
+
+How much time did you spend on this homework assignment outside of class?
+
+\section*{Acknowledgments}
+
+Cite all the people you've worked with on this homework, as well as any other
+resources you used apart from the FCML textbook. If you used generative AI
+tools (e.g., ChatGPT), please describe how you used them.
+If you did not work with anyone else or use generative AI tools, please say so.
+
+\end{document}

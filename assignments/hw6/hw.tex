@@ -1,0 +1,81 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{graphicx}
+\usepackage{newpxtext}
+\usepackage{eulervm}
+\DeclareMathOperator{\diag}{\mathrm{diag}}
+\DeclareMathOperator{\cov}{\texttt cov}
+\long\def\ans#1{{\color{Blue}{\em #1}}}
+\usepackage[margin=1in]{geometry}
+\title{Homework 6}
+\author{Your name here}
+\date{\today{}}
+
+\begin{document}
+\maketitle
+
+\section{Expectations, two ways}
+
+\emph{(Adapted from FCML Ex. 2.4)}
+
+\bigskip
+
+\noindent Let $X$ be a random variable with uniform density, $p(x) =
+\mathcal{U}(a,b)$ (see FCML section 2.5.1).
+\noindent Work out analytically $\mathbf{E}_{p(x)} \left\{ 35 + 3x - 3x^2 +
+0.2x^3 + 0.01x^4 \right\}$ for $a=-1$, $b=9$ (show the steps).
+Then, compute a sample-based approximation to this expectation by filling out
+the necessary code in \texttt{hw.py}.
+What is the value you get for the approximation (using all 1000 generated
+samples)?
+Include the generated figure \texttt{sample\_based\_approximation.pdf} in the
+written portion. In the caption for the figure, include a description of the
+trend you see in the plot (you learned how to insert figures with captions in
+\LaTeX{} in HW0).
+
+\bigskip
+
+\subsection*{Solution}
+%%% Answer START %%%
+\ans{%
+\begin{align*}
+\mathbf{E}_{p(x)} \{ 35 + 3x - 3x^2 + 0.2x^3 + 0.01x^4 \} = \int_{-\infty}^{\infty} \left( 35 + 3x - 3x^2 + 0.2x^3 + 0.01x^4 \right) p(x) \, \mathrm{d}x
+\end{align*}
+
+With $X \sim U(a,b)$, then its pdf is $p(x) = \frac{1}{b-a}$, and the expectation is:
+
+{\scriptsize
+\begin{align*}
+\int_{a}^{b} \left( 35 + 3x - 3x^2 + 0.2x^3 + 0.01x^4 \right) \frac{1}{b - a} \, \mathrm{d}x & = \frac{1}{b - a} \int_{a}^{b} \left( 35 + 3x - 3x^2 + 0.2x^3 + 0.01x^4 \right) \, \mathrm{d}x \\
+& = \frac{35x + \frac{3}{2}x^2 - \frac{3}{3}x^3 + \frac{0.2}{4}x^4 + \frac{0.01}{5}x^5 \Bigr|_{a}^{b}}{b - a} \\
+& = \frac{%
+ \left( 35b + \frac{3}{2}b^2 - b^3 + \frac{0.2}{4}b^4 + \frac{0.01}{5}b^5 \right)
+ - \left( 35a + \frac{3}{2}a^2 - a^3 + \frac{0.2}{4}a^4 + \frac{0.01}{5}a^5 \right)}
+  {b - a}
+\end{align*}
+}
+With $a = -1$ and $b = 9$, the analytically computed expectation is 18.61.
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.5\textwidth]{sample_based_approximation.pdf}
+    \caption{Plot of sampling approximation over 10,000; the red line
+    represents the true expected value.}
+\end{figure}
+}
+%%% Answer END %%%
+
+\section{Workload}
+
+How many hours did you spend on this assignment?
+
+\section*{Acknowledgments}
+
+Cite all the people you've worked with on this homework, as well as any other
+resources you used apart from the FCML textbook. If you used generative AI
+tools (e.g., ChatGPT), please describe how you used them.
+
+If you did not work with anyone else or use generative AI tools, please say so.
+
+\end{document}
