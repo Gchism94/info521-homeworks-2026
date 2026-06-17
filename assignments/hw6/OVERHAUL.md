@@ -12,6 +12,12 @@ hw6 is a **hybrid**: code (`hw.py` + `test_hw.py`) computes a sample-based estim
 closed-form target. Unlike hw16, the recovery reference is a **closed form** (`18.61`) — no
 grid integration needed.
 
+> **This draft now covers BOTH halves.** The **code/MC half** (§2, §4a–§4e) was drafted and
+> validated earlier and is **unchanged here**. The **written analytic-derivation half** (`hw.tex`,
+> LaTeX `%%% Answer %%%` markers, mirroring the hw5 pilot) is added in this additive pass: see
+> the new **§4f** (`hw.tex` diff) and the **two-component rubric** in §3. The objective→row map
+> (§5) now maps the derivation objective **W1** to a written rubric row (previously unmeasured).
+
 **Two real defects fixed:** (1) `test_expectation_values` **pins the exact running-mean RNG
 stream** under `seed=100` (couples the grade to the student's RNG call order); (2) the module
 **samples, prints, plots, and writes a PDF at import** — `import hw` runs the whole demo.
@@ -31,6 +37,8 @@ it by averaging the integrand over random samples — Monte Carlo integration. H
 the same `E[f(X)]` two ways (analytic + Monte Carlo) and watch the estimate converge.
 
 **2. Learning objectives** (Bloom verb + the graded check each is measured by):
+- **W1** *Derive* `E[f(X)]` analytically for `X~U(−1,9)` and obtain `18.61`. *(Analyze —
+  Written derivation rubric, steps W-A…W-D — see §3)*
 - **O1** *Implement* `f` and identify the analytic target. *(Apply — Correctness:
   `test_f_matches_formula`, `test_true_expectation_is_analytic`)*
 - **O2** *Draw* i.i.d. samples from `U(−1,9)`. *(Apply — Correctness:
@@ -41,9 +49,10 @@ the same `E[f(X)]` two ways (analytic + Monte Carlo) and watch the estimate conv
 - **O4** *Interpret* the convergence — sampling error, how many samples are "enough", and when
   Monte Carlo fails. *(Evaluate — Interpretation rubric; the autograder cannot check this)*
 
-**3. The task (outcome, not recipe).** Implement `f`; draw samples from `U(−1,9)`; estimate
-`E[f(X)]` and produce the convergence curve. Show the estimate approaches the analytic value
-`18.61`.
+**3. The task (outcome, not recipe).** *(Written)* Derive `E[f(X)]` analytically for
+`X~U(−1,9)`, showing the steps, and arrive at `18.61`. *(Code)* Implement `f`; draw samples
+from `U(−1,9)`; estimate `E[f(X)]` and produce the convergence curve, showing the estimate
+approaches the analytic value `18.61`.
 
 **4. Allowed methods (scope stated plainly).** **The autograder tests the recovery invariant
 — that your estimate converges to the analytic `E[f(X)]` — and that your samples are
@@ -52,14 +61,18 @@ average `f` earns full credit. **Scope:** this assignment *is* Monte Carlo with 
 sampling — "any approach" means any valid uniform sampler + sample mean, **not** a different
 estimator (e.g. quadrature), which the tests are not designed to reward.
 
-**5. How you'll be assessed (criteria shown up front).**
-- *Correctness (autograded, 55%)* — §2: `f` matches its formula; samples are `U(−1,9)`; the
-  Monte Carlo estimate recovers `18.61` within `±0.5` across seeds; **every recovery floor is
-  paired with a degeneracy guard** (variance, varies-with-seed, non-flat curve). Thresholds
-  visible in `test_hw.py`.
-- *Interpretation (rubric, 35%)* — the §6 prompt, scored Claim/Evidence/Reasoning/Limits.
-- *Process (10%)* — seeded, **no work at import** (`__main__`-guarded), labeled convergence
-  plot, runs clean.
+**5. How you'll be assessed (criteria shown up front).** Two components (proposed weight
+**Written 30% / Code 70%** — see §3, flagged for ratification):
+- *Written derivation (30%)* — the per-step rubric in §3 (steps W-A…W-D), each scored on the
+  validity of the move; any valid route to `18.61` earns full credit.
+- *Code / Monte Carlo (70%, internally 55/35/10)*:
+  - *Correctness (55%)* — §2: `f` matches its formula; samples are `U(−1,9)`; the Monte Carlo
+    estimate recovers `18.61` within `±0.5` across seeds; **every recovery floor is paired with
+    a degeneracy guard** (variance, varies-with-seed, non-flat curve). Thresholds visible in
+    `test_hw.py`.
+  - *Interpretation (35%)* — the §6 prompt, scored Claim/Evidence/Reasoning/Limits.
+  - *Process (10%)* — seeded, **no work at import** (`__main__`-guarded), labeled convergence
+    plot, runs clean.
 
 **6. Required interpretation** (markdown cell in `hw.py`): one short paragraph on the
 **convergence** — from your curve, roughly how many samples are needed before the estimate
@@ -218,16 +231,51 @@ def test_running_expectations_converges():
 
 ---
 
-## 3. `hw6/rubric.md` (NEW — autograded split 55/35/10)
+## 3. `hw6/rubric.md` (NEW — TWO weighted components: Written derivation + Code/MC)
 
-Shipped to students (TILT). Interpretation = CERL on **convergence/result reading** — what the
-autograder structurally can't verify. Full file in the §4d diff.
+hw6 is a hybrid, so the rubric has **two top-level components** with an inter-component weight.
+Full file content in the §4d diff; shipped to students (TILT).
 
-| Layer | Weight | How |
+### ⚖️ Proposed inter-component weight — **FLAG FOR RATIFICATION**
+
+> **Proposed: Written derivation 30% / Code-MC 70% of the HW.** Rationale (effort-weighted):
+> the analytic derivation is a single polynomial integral (~25–30 min) while the code half —
+> implement `f`, the sampler, the estimator, the convergence curve, and the interpretation
+> paragraph — is ~1.5–2 h; 30% gives the derivation meaningful weight without overshadowing the
+> bulk of the work. **Alternatives to consider:** 25/75 (lighter written) or 35/65 (heavier
+> written). **This split is your decision — please ratify or override.**
+
+### 3a. Component A — WRITTEN analytic derivation (proposed 30%) — per-step rubric
+
+Mirrors the hw5 pilot. Enumerate the major logical steps; **each is scored on the validity of
+the move, not on matching this key's exact algebra. Any valid route to `18.61` earns full
+credit** (e.g. integrating term-by-term, or using the uniform moment formula
+`E[X^k] = (b^{k+1}−a^{k+1})/((k+1)(b−a))` + linearity). Tiers 0–3 map to a fraction of each
+step's points (3→100%, 2→80%, 1→45%, 0→0%); weights below sum to 30 (HW-level points).
+
+| Step | Obj | Pts | 3 — Exemplary | 2 — Proficient | 1 — Developing | 0 |
+|------|-----|:---:|---------------|----------------|----------------|---|
+| **W-A · Setup** | W1 | 7 | writes `E[f(X)] = ∫ f(x)p(x)dx`, states `p(x)=1/(b−a)` on `[a,b]` so the integral reduces to `∫_a^b f/(b−a)` | setup right, support/pdf implicit | wrong pdf or limits but intent | missing |
+| **W-B · Antiderivative** | W1 | 8 | integrates term by term: `35x + (3/2)x² − x³ + 0.05x⁴ + 0.002x⁵` | minor coefficient slip | partial / wrong terms | missing |
+| **W-C · Evaluate** | W1 | 7 | applies `[·]_a^b` and divides by `(b−a)` correctly (on the student's own antiderivative) | minor slip | sets up but can't evaluate | missing |
+| **W-D · Substitute → 18.61** | W1 | 8 | substitutes `a=−1, b=9`, shows the arithmetic to `18.61` | right value, minor arithmetic slip | substitutes but can't finish | missing/incorrect |
+
+**Load-bearing vs. independent.** W-A is **load-bearing** (a wrong pdf/limits caps the
+downstream values) but **route-free**. W-B/W-C/W-D form a value-chain, yet each **move** is
+gradeable on the student's own previous line — an upstream slip caps the final value, not the
+downstream method credit. (No CERL row here: the interpretation layer lives in the code half;
+the written half is scored purely on derivation validity.)
+
+### 3b. Component B — CODE / Monte Carlo (proposed 70%) — internally 55/35/10 (unchanged)
+
+| Layer | Weight (of component) | How |
 |---|:---:|---|
 | **Correctness** | **55%** | machine-verified by `test_hw.py` (§2.5): formula + analytic value + uniform-sampler + recovery + floor-and-guard. Independent → partial credit. |
 | **Interpretation** | **35%** | the §6 paragraph, 0–3 on Claim/Evidence/Reasoning/Limits. PASS = ≥2 every dimension. |
 | **Process** | **10%** | seeded; `import hw` does no work; convergence plot labeled; runs clean. |
+
+**Effective HW-level weights** (at the proposed 30/70): Written derivation 30% · Code
+Correctness 38.5% · Code Interpretation 24.5% · Code Process 7%.
 
 ---
 
@@ -452,20 +500,38 @@ markers are preserved** (and `f` keeps a `...` placeholder so the stripped templ
 +locally first.
 ```
 
-### 4d. `rubric.md` — NEW file
+### 4d. `rubric.md` — NEW file (TWO components)
 
 ```diff
 --- /dev/null
 +++ b/rubric.md
 @@
-+# HW6 — Grading rubric (Monte Carlo expectation)
++# HW6 — Grading rubric (hybrid: written derivation + Monte Carlo code)
 +
-+Autograded HW: machine-verified correctness + a human-scored interpretation layer for what the
-+autograder structurally cannot check (convergence/result reading). Split **55 / 35 / 10** per
-+the repo rule for autograded HWs (see the repo-root `rubric.md`).
++Two components. **Proposed inter-component weight: Written derivation 30% / Code-MC 70% of the
++HW — to be ratified by the instructor** (alternatives 25/75 or 35/65). The code component keeps
++the autograded 55/35/10 split (machine-verified correctness + CERL interpretation + process).
 +
-+## Correctness (55) — machine-verified
++## Component A — Written analytic derivation (30%) — per-step rubric
 +
++Submitted in `hw.tex`/`hw.pdf` (hard copy ok). Each step is scored on the **validity of the
++move**, not on matching this key's algebra. **Any valid route to `E[f(X)] = 18.61` earns full
++credit** (term-by-term integration, or the uniform-moment formula + linearity). Tiers 0–3 map
++to a fraction of each step's points.
++
++| Step | Pts | 3 — Exemplary | 2 — Proficient | 1 — Developing | 0 |
++|------|:---:|---------------|----------------|----------------|---|
++| **W-A · Setup** | 7 | `E[f]=∫f·p`, `p=1/(b−a)` on `[a,b]`, reduces to `(1/(b−a))∫_a^b f` | setup right, support implicit | wrong pdf/limits | missing |
++| **W-B · Antiderivative** | 8 | `35x + (3/2)x² − x³ + 0.05x⁴ + 0.002x⁵` | minor coeff slip | partial | missing |
++| **W-C · Evaluate** | 7 | applies `[·]_a^b` and `/(b−a)` correctly | minor slip | can't evaluate | missing |
++| **W-D · Substitute → 18.61** | 8 | `a=−1, b=9`, arithmetic to `18.61` | minor arithmetic slip | can't finish | missing |
++
++W-A is load-bearing (caps downstream values) but route-free; W-B/W-C/W-D moves are gradeable
++independently on the student's own previous line.
++
++## Component B — Code / Monte Carlo (70%) — autograded 55/35/10
++
++### Correctness (55) — machine-verified
 +`pytest test_hw.py`. Independent tests → partial credit; thresholds visible in the file:
 +`f` matches its polynomial; `true_expectation` equals the analytic `18.61`; `draw_samples` is
 +`U(−1,9)` (support, mean ≈ 4, variance ≈ 8.33, not constant); the Monte Carlo estimate recovers
@@ -473,8 +539,7 @@ markers are preserved** (and `f` keeps a `...` placeholder so the stripped templ
 +(sample variance, varies-with-seed, non-flat convergence curve). Any correct uniform sampler +
 +sample mean passes; RNG draw order is never tested.
 +
-+## Interpretation (35) — Claim / Evidence / Reasoning / Limits (0–3 each)
-+
++### Interpretation (35) — Claim / Evidence / Reasoning / Limits (0–3 each)
 +The convergence paragraph in `hw.py`. PASS = ≥2 every dimension; else one revise-and-resubmit.
 +
 +| Dim | 3 | 2 | 1 | 0 |
@@ -484,13 +549,12 @@ markers are preserved** (and `f` keeps a `...` placeholder so the stripped templ
 +| **Reasoning** | links larger `N` → smaller error (≈ `1/√N`) → tighter estimate | sound | superficial | absent |
 +| **Limits** | names a real failure (heavy-tailed integrand, wrong support, correlated samples, single seed) | one weakly | minimal | none |
 +
-+## Process (10)
-+
++### Process (10)
 +Seeded via `seed=`; `import hw` does no work (drivers `__main__`-guarded); convergence plot
 +labeled; notebook runs top-to-bottom.
 +
 +**LLM pre-grading** may draft per-dimension scores + one-line reasons; a human confirms and is
-+final.
++final. (LLM pre-grading is weak on the written derivation — a human grades W-A…W-D.)
 ```
 
 ### 4e. `make_release` — ship `rubric.md` to students (TILT)
@@ -505,10 +569,104 @@ markers are preserved** (and `f` keeps a `...` placeholder so the stripped templ
 +cp rubric.md release
 ```
 
-> **`hw.tex` left unchanged.** The analytic derivation (`18.61`) and the figure/caption are the
-> written part and already earn their marks; they fold into the hybrid grade. *(Minor
-> pre-existing nit, not fixed here: the figure caption says "over 10,000" while the plot uses
-> 1000 samples.)*
+### 4f. `hw.tex` — written-half framing + polished derivation (additive; mirrors hw5)
+
+Two minimal, format-stable edits (per the format note, the full 8-part prose lives in this
+`OVERHAUL.md`; `hw.tex` gets only what must be in the document):
+**(a)** a TILT prompt line **outside** the `%%% Answer %%%` markers that reveals the target
+`E[f(X)] = 18.61` and points to `rubric.md` (retained after the strip);
+**(b)** the reference derivation **inside** the markers, polished to earn full marks — name the
+assumptions, make each step explicit (setup → antiderivative → evaluate → substitute), show the
+substitution arithmetic to `18.61`, and add a reference interpretation line. All inside-marker
+content (derivation, result line, figure) is stripped by `make_release`. *(Also fixes the
+pre-existing caption nit — "10,000" → the actual convergence description.)*
+
+```diff
+--- a/hw.tex
++++ b/hw.tex
+@@
+ Then, compute a sample-based approximation to this expectation by filling out
+ the necessary code in \texttt{hw.py}.
+-What is the value you get for the approximation (using all 1000 generated
+-samples)?
+ Include the generated figure \texttt{sample\_based\_approximation.pdf} in the
+-written portion. In the caption for the figure, include a description of the
+-trend you see in the plot (you learned how to insert figures with captions in
+-\LaTeX{} in HW0).
++written portion, with a caption describing the trend you see.
++
++\bigskip
++
++\noindent\emph{Criteria \& target (shown up front, TILT).} Your derivation should
++arrive at $\mathbf{E}_{p(x)}\{f(X)\} = 18.61$, and your Monte Carlo estimate in
++\texttt{hw.py} should converge to this value. The analytic derivation is graded by
++the per-step rubric in \texttt{rubric.md}: \emph{any} mathematically valid route to
++$18.61$ earns full credit, but you must show each step.
+
+ \subsection*{Solution}
+ %%% Answer START %%%
+-\ans{%
+-\begin{align*}
+-\mathbf{E}_{p(x)} \{ 35 + 3x - 3x^2 + 0.2x^3 + 0.01x^4 \} = \int_{-\infty}^{\infty} \left( ... \right) p(x) \, \mathrm{d}x
+-\end{align*}
+-With $X \sim U(a,b)$, then its pdf is $p(x) = \frac{1}{b-a}$, and the expectation is:
+-{\scriptsize
+-\begin{align*}
+-\int_{a}^{b} \left( ... \right) \frac{1}{b - a} \, \mathrm{d}x & = \frac{1}{b-a}\int_a^b (...) \, \mathrm{d}x \\
+-& = \frac{35x + \frac{3}{2}x^2 - \frac{3}{3}x^3 + \frac{0.2}{4}x^4 + \frac{0.01}{5}x^5 \Bigr|_a^b}{b-a} \\
+-& = \frac{(35b + ...) - (35a + ...)}{b - a}
+-\end{align*}
+-}
+-With $a = -1$ and $b = 9$, the analytically computed expectation is 18.61.
+-\begin{figure}[htbp]
+-    \centering
+-    \includegraphics[width=0.5\textwidth]{sample_based_approximation.pdf}
+-    \caption{Plot of sampling approximation over 10,000; the red line
+-    represents the true expected value.}
+-\end{figure}
+-}
++\ans{%
++\noindent\textbf{Assumptions.} $X \sim \mathcal{U}(a,b)$, so its density is
++$p(x) = \frac{1}{b-a}$ for $x \in [a,b]$ and $0$ otherwise; write
++$f(x) = 35 + 3x - 3x^2 + 0.2x^3 + 0.01x^4$. By the definition of expectation and
++the linearity of integration,
++\begin{align*}
++\mathbf{E}_{p(x)}\{f(X)\}
++&= \int_{-\infty}^{\infty} f(x)\, p(x)\, \mathrm{d}x
++= \int_{a}^{b} f(x)\, \frac{1}{b-a}\, \mathrm{d}x
++= \frac{1}{b-a}\int_{a}^{b} f(x)\, \mathrm{d}x,
++\end{align*}
++since $p(x)=0$ outside $[a,b]$.
++
++\noindent Integrating term by term,
++\begin{align*}
++\int f(x)\,\mathrm{d}x = 35x + \tfrac{3}{2}x^2 - x^3 + 0.05\,x^4 + 0.002\,x^5 + C,
++\end{align*}
++so the expectation is
++\begin{align*}
++\mathbf{E}_{p(x)}\{f(X)\}
++= \frac{\left[\,35x + \tfrac{3}{2}x^2 - x^3 + 0.05x^4 + 0.002x^5\,\right]_{a}^{b}}{b-a}.
++\end{align*}
++
++\noindent Substituting $a=-1$, $b=9$ (so $b-a = 10$):
++\begin{align*}
++\text{at } x=9:&\quad 315 + 121.5 - 729 + 328.05 + 118.098 = 153.648,\\
++\text{at } x=-1:&\quad -35 + 1.5 + 1 + 0.05 - 0.002 = -32.452,\\
++\mathbf{E}_{p(x)}\{f(X)\} &= \frac{153.648 - (-32.452)}{10} = \frac{186.1}{10} = 18.61.
++\end{align*}
++
++\noindent\textbf{Interpretation.} $18.61$ is the exact value the Monte Carlo
++estimate in \texttt{hw.py} approximates; as the sample size grows the sample-based
++approximation (blue curve) converges to this analytic value (red line).
++\begin{figure}[htbp]
++    \centering
++    \includegraphics[width=0.5\textwidth]{sample_based_approximation.pdf}
++    \caption{Sample-based approximation of $\mathbf{E}_{p(x)}\{f(X)\}$ as the number
++    of samples grows; the red line marks the analytic value $18.61$.}
++\end{figure}
++}
+ %%% Answer END %%%
+```
 
 ---
 
@@ -516,16 +674,20 @@ markers are preserved** (and `f` keeps a `...` placeholder so the stripped templ
 
 | Objective | Bloom | Assessed by | Measurable? |
 |-----------|-------|-------------|:-----------:|
+| **W1** derive `E[f(X)]` analytically → 18.61 | Analyze | **Written derivation rubric, steps W-A…W-D** (§3a) | ✅ written rubric |
 | **O1** implement `f` / analytic target | Apply | `test_f_matches_formula`, `test_true_expectation_is_analytic` | ✅ autograded |
 | **O2** sample `U(−1,9)` | Apply | `test_draw_samples_uniform`, `test_draw_samples_reproducible_but_random` | ✅ autograded |
 | **O3** MC estimate recovers analytic | Analyze | `test_mc_recovers_analytic_expectation`, `test_mc_estimate_varies_with_seed`, `test_running_expectations_converges` | ✅ autograded |
 | **O4** interpret convergence | Evaluate | Interpretation rubric (CERL) | ✅ rubric |
 | *(communication/reproducibility)* | — | Process (10%) | ✅ partly mechanical, partly rubric |
 
-**Every objective maps to a check or row.** **Flagged as not machine-measurable:** O4 — how
+**Every objective now maps to a check or row.** **W1 (the analytic derivation) was previously
+unmeasured** — the old 1/0.5/0 gate scored the written part only as "complete"; it now maps to
+the per-step Written derivation rubric (§3a). **Flagged as not machine-measurable:** O4 — how
 many samples are "enough", the `1/√N` error intuition, and *why/when* Monte Carlo fails are
 structurally beyond the autograder (the recovery test confirms *that* it converged at `N`, not
-the student's understanding of *why*). That gap is the reason interpretation carries 35%.
+the student's understanding of *why*). That gap is the reason the code interpretation carries
+35% (of the code component).
 
 ---
 
@@ -535,11 +697,11 @@ the student's understanding of *why*). That gap is the reason interpretation car
 |-----------|--------------------|
 | Code (fill `f`, sampler, estimator) | unchanged work, now in named functions (~1–2 h) |
 | Interpretation paragraph | **+~15 min** (new) |
-| Analytic derivation (`hw.tex`) | unchanged |
+| Analytic derivation (`hw.tex`) | **same student effort** (~25–30 min); only the *grading* changes (gate → per-step rubric) |
 | Local iteration | **faster** — `import hw` / `pytest` no longer sample + write a PDF at import |
 
-Net within 5–6 hrs/week. The refactor adds structure, not student effort; no computation to
-trim.
+Net within 5–6 hrs/week. The refactor and the per-step written rubric add structure and better
+feedback, **not student effort**; no computation to trim.
 
 ---
 
@@ -558,7 +720,21 @@ trim.
    (matches the original's defensive pattern; verified by byte-compiling the stripped file).
 5. **`true_expectation` kept as a SOLUTION-marked name and tested ≈ 18.61** — a closed-form
    floor that ties the code to the written analytic result (hybrid coherence).
-6. **`hw.tex` untouched; `make_release` ships `rubric.md`.**
+6. **`make_release` ships `rubric.md`.**
+
+**Written-half pass (this additive round):**
+
+7. **Inter-component weight 30/70 — FLAGGED for ratification (§3).** The HW had no principled
+   written-vs-code split; I propose Written 30% / Code 70% (effort-weighted) and explicitly
+   leave it as the instructor's decision (alternatives 25/75, 35/65).
+8. **W1 was previously unmeasured.** The analytic derivation was only gate-graded; it now maps
+   to a per-step rubric row (§3a, §5).
+9. **Minimal `hw.tex` edits, mirroring hw5 (LaTeX, not hw9/Typst).** The full 8-part prose stays
+   in this `OVERHAUL.md`; `hw.tex` gets only the TILT target line (outside markers) and the
+   polished derivation (inside `%%% Answer %%%`). The target `18.61` is revealed in the prompt
+   (TILT), while the derivation/result line stays stripped — same approach as hw9.
+10. **Code half untouched.** No edits to §2, §4a (`hw.py`), §4b (`test_hw.py`), §4c
+    (`README.md`), or §4e (`make_release`); all code-half numbers stand.
 
 ---
 
@@ -571,30 +747,51 @@ trim.
   passes the recovery floor but rejected by the varies-with-seed guard**; wrong interval
   `U(0,1)` → rejected by the recovery floor.
 
+**Written-half pass (this round):**
+- **`hw.tex` strip check (no compile, per format note):** ran the `make_release` sed on the
+  proposed `hw.tex`. **Stripped (absent from release):** assumptions block, "integrating term by
+  term", the antiderivative (`0.05x⁴`/`0.002`), the substitution arithmetic (`153.648`, `186.1`),
+  the inside result line `= 18.61`, the reference interpretation, `\includegraphics`. **Retained
+  (student-facing):** the prompt, the TILT target reveal (`= 18.61`), the `rubric.md` pointer,
+  `\subsection*{Solution}`, `\section{Workload}`. Markers balanced (1 START / 1 END); `\ans{`
+  absent from the release. **All checks PASS.**
+- **Code half unchanged:** §2/§4a/§4b numbers (`7 passed in 0.27s`, `import` 0.41–0.55 s,
+  stripped-template compiles, mutation results) are carried over verbatim — not re-touched.
+
 ---
 
 ## 9. Proposed commit message (when applied — do NOT commit now)
 
 ```
-hw6 overhaul: distributional/recovery autograder + MC interpretation (stochastic)
+hw6 overhaul: two-component rubric (written derivation + MC autograder)
 
+CODE/MC half (stochastic pattern):
 - test_hw.py: replace the pinned running-mean RNG-stream check with formula +
   distributional + recovery tests. Closed-form target E[f(X)] = 18.61; recover
   within +/-0.5 at N=20000; every recovery floor paired with a degeneracy guard
-  (sample variance, varies-with-seed, non-flat curve). Tolerances locked over a
-  12-seed sweep; suite ~0.27s. (7 passed.)
-- hw.py: refactor the module-level sampling/printing/plotting into seedable
-  functions (draw_samples, monte_carlo_expectation, running_expectations) and a
-  __main__ block so `import hw` is cheap (no sampling/savefig at import); add a
-  Required-Interpretation markdown cell (convergence, 1/sqrt(N) error, failure
-  modes). SOLUTION markers preserved; f keeps a `...` placeholder so the stripped
-  template compiles.
+  (sample variance, varies-with-seed, non-flat curve). 12-seed sweep; ~0.27s,
+  7 passed.
+- hw.py: refactor module-level sampling/printing/plotting into seedable functions
+  (draw_samples, monte_carlo_expectation, running_expectations) + a __main__ block
+  so `import hw` is cheap; add a Required-Interpretation markdown cell. SOLUTION
+  markers preserved; f keeps a `...` placeholder so the stripped template compiles.
 - README.md: 8-part framing; criteria-up-front specs table (replaces 1/0.5/0).
-- rubric.md (new): autograded 55/35/10; CERL interpretation on convergence.
+
+WRITTEN half (derivation pattern, mirrors hw5):
+- hw.tex: wrap the analytic E[f(X)] derivation in the 8-part framing; reveal the
+  target 18.61 in the prompt (TILT, outside %%% Answer %%%); polish the reference
+  derivation inside the markers (assumptions, explicit antiderivative + evaluation
+  + substitution arithmetic to 18.61, reference interpretation line). Strip check
+  passes (derivation/result stripped, prompt+target retained).
+
+- rubric.md (new): TWO components — Written derivation (per-step W-A..W-D) +
+  Code/MC (55/35/10). Proposed inter-component weight Written 30% / Code 70%,
+  FLAGGED for instructor ratification. Objective W1 (derivation), previously
+  unmeasured, now maps to a written rubric row.
 - make_release: ship rubric.md.
 
-Contract changes from module-level `expectations` to functions. Recovery
-invariant tested, never the RNG draw order. hw.tex (analytic derivation) unchanged.
+Contract changes from module-level `expectations` to functions; recovery invariant
+tested, never the RNG draw order.
 
 Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>
 ```
