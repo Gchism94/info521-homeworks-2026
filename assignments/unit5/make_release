@@ -1,0 +1,6 @@
+#!/bin/sh
+rm -rf release && mkdir -p release/data
+sed '/^ *### SOLUTION START ###/,/^ *### SOLUTION END ###/d' hw.py > release/hw.py
+sed '/<!-- SOLUTION START -->/,/<!-- SOLUTION END -->/d' unit5.qmd > release/unit5.qmd
+cp test_hw.py specs.md release/
+cp data/*.csv release/data/

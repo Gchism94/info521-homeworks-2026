@@ -1,0 +1,137 @@
+---
+title: "Unit 5 — Approximate Bayesian Inference"
+subtitle: "Four ways to one posterior: graphical model · MAP (Newton) · Laplace · MCMC"
+format:
+  typst:
+    papersize: us-letter
+    margin: { x: 1.25in, y: 1in }
+jupyter: python3
+---
+
+# 1. Context & purpose
+
+One Bayesian logistic-regression posterior (FCML binary-classification data, Gaussian prior on
+$\mathbf{w}$), recovered **four ways**: its **graphical model** (the factorization), the **MAP**
+by Newton–Raphson, the **Laplace** Gaussian at the mode, and **Metropolis–Hastings MCMC**. The
+payoff is the comparison — same posterior, four costs/accuracies, and the lesson that the
+posterior **mode ≠ mean**.
+
+# 2. Learning objectives
+
+| | Objective | Bloom | Bundle · spec |
+|---|-----------|-------|----------------|
+| **O1** | Draw the PGM (nodes/edges/plate; `σ²` a random-variable node) | Analyze | Correctness · S1–S3 (human, structural) |
+| **O2** | Find the MAP by Newton–Raphson | Apply | Correctness · M1–M3 (autograded) |
+| **O3** | Build the Laplace covariance `(−H)⁻¹` | Apply | Correctness · L1–L2 (autograded) |
+| **O4** | Implement MH-MCMC and recover the posterior | Apply/Analyze | Correctness · MC1–MC4 (autograded) |
+| **O5** | Derive Newton–Raphson (Poisson) and Laplace (Beta–Binomial) | Analyze | Correctness · D1–D2 (human, per-step) |
+| **O6** | Verify the four methods agree; compare cost/accuracy; mode vs mean | Evaluate | Correctness · X1–X2 + Interpretation |
+
+# 3–5. Task, allowed approaches, assessment
+
+Draw the PGM; implement MAP/Laplace/MCMC (any correct method passes — tests are recovery/
+property/floor-AND-guard + **cross-method agreement**, never pinned MCMC draws); derive the two
+update rules. Specifications grading — see `specs.md`. **Correctness (core/gateway) is this unit's
+largest bundle and mixes four spec kinds**: autograded (MAP/Laplace/MCMC + cross-method),
+human structural (PGM), and human per-step (the two derivations). Interpretation + Process are
+separate bundles; any unmet bundle → one revise-and-resubmit.
+
+---
+
+## Way 1 — The graphical model  *(structure, human-graded)*
+
+Draw the PGM for inferring $\mathbf{w}$ from the data. It must encode
+$p(\mathbf{w},\mathbf{t}\mid \mathbf{X},\sigma^2)=p(\mathbf{w}\mid\sigma^2)\prod_{n}p(t_n\mid\mathbf{x}_n,\mathbf{w})$.
+
+::: {.callout-note appearance="minimal"}
+**Your diagram + the conditional independence it encodes:**  `%%% YOUR ANSWER HERE %%%`
+:::
+
+<!-- SOLUTION START -->
+::: {.callout-tip title="Reference (instructor)"}
+Nodes: $\sigma^2$ and $\mathbf{w}$ are **random-variable open circles** ($\sigma^2$ carries a
+prior in the course — Unit 4 — so it is a random variable we *condition on* here, **not** a fixed
+dot); $\mathbf{x}_n,t_n$ are **observed/shaded**. Edges $\sigma^2\!\to\!\mathbf{w}$ (prior),
+$\mathbf{w}\!\to\!t_n\!\leftarrow\!\mathbf{x}_n$ (likelihood); a **plate** over $n=1..N$ encloses
+$\mathbf{x}_n,t_n$ and excludes the shared $\mathbf{w},\sigma^2$. Because the only path coupling the
+outputs runs through the shared $\mathbf{w}$, the graph asserts $t_n\perp t_m\mid \mathbf{w}$
+(d-separation): conditioning on $\mathbf{w}$ blocks the path.
+:::
+<!-- SOLUTION END -->
+
+## Ways 2–4 — MAP, Laplace, MCMC  *(autograded)*
+
+```{python}
+import numpy as np, matplotlib.pyplot as plt
+from hw import load_data, newton_map, laplace_covariance, hessian, MetropolisSampler, SIG_SQ
+
+X, t = load_data()
+w_map = newton_map(X, t)                          # Way 2: MAP (the mode)
+g_cov = laplace_covariance(w_map, X)              # Way 3: Laplace covariance = (-H)^-1
+chain = np.array(MetropolisSampler(X, t, 0.5, SIG_SQ, seed=0).generate_samples(8000))[2000:]
+post_mean, post_cov = chain.mean(0), np.cov(chain.T)   # Way 4: MCMC
+
+print(f"MAP mode      w = {np.round(w_map,3)}")
+print(f"MCMC mean     w = {np.round(post_mean,3)}   <-- mode != mean (skewed posterior)")
+print(f"Laplace std     = {np.round(np.sqrt(np.diag(g_cov)),3)}")
+print(f"MCMC std        = {np.round(np.sqrt(np.diag(post_cov)),3)}   <-- similar spread")
+```
+
+```{python}
+#| label: fig-fourways
+#| fig-cap: "MCMC samples (gray), the Laplace 1-σ ellipse (blue), and the MAP mode (red)."
+from matplotlib.patches import Ellipse
+ev, evec = np.linalg.eigh(g_cov); ang = np.degrees(np.arctan2(*evec[:, 1][::-1]))
+fig, ax = plt.subplots(figsize=(4.4, 3.6))
+ax.scatter(chain[::20, 0], chain[::20, 1], s=3, c="#bbb")
+ax.add_patch(Ellipse(w_map, 2*np.sqrt(ev[0]), 2*np.sqrt(ev[1]), angle=ang, fill=False, color="C0", lw=2))
+ax.plot(*w_map, "r*", ms=14)
+ax.set_xlabel("$w_1$"); ax.set_ylabel("$w_2$"); plt.tight_layout(); plt.show()
+```
+
+## Way 5 — Derive the methods  *(derivations, human per-step)*
+
+**D1.** Derive the Newton–Raphson update for a **Poisson** likelihood with a Gaussian prior
+(gradient → Hessian → update). **D2.** Derive the **Laplace** approximation for a **Beta** prior +
+**Binomial** likelihood (mode $\hat r$ and curvature $\nu$).
+
+::: {.callout-note appearance="minimal"}
+**Your derivations (D1, D2):**  `%%% YOUR ANSWER HERE %%%`
+:::
+
+<!-- SOLUTION START -->
+::: {.callout-tip title="Reference derivations (instructor)"}
+**D1 (Poisson NR).** $\log p$ has gradient $\partial_\mathbf{w}=-\tfrac{1}{\sigma^2}\mathbf{w}+\sum_n\big(t_n(\mathbf{w}^\top\mathbf{x}_n)^{-1}-1\big)\mathbf{x}_n$
+and Hessian $\partial^2=-\tfrac1{\sigma^2}\mathbf{I}-\sum_n t_n(\mathbf{w}^\top\mathbf{x}_n)^{-2}\mathbf{x}_n\mathbf{x}_n^\top$;
+update $\mathbf{w}^{(i+1)}=\mathbf{w}^{(i)}-H^{-1}g$ (minus retained while maximizing — $H$ is
+negative-definite at the MAP).
+
+**D2 (Beta–Binomial Laplace).** Posterior $\propto r^{\gamma-1}(1-r)^{\delta-1}$ with
+$\gamma=y+\alpha,\ \delta=N-y+\beta$; mode $\hat r=\dfrac{\gamma-1}{\gamma+\delta-2}$; curvature
+$\nu=-\partial_r^2\log p|_{\hat r}=\dfrac{(\alpha+\beta+N-2)^3}{(y+\alpha-1)(N-y+\beta-1)}$;
+approximation $\mathcal N(\hat r,1/\nu)$.
+:::
+<!-- SOLUTION END -->
+
+> **Through-line.** hw14 MAP → hw15 Laplace → hw16 MCMC, all on one model whose **graphical
+> structure** (Way 1) and **prior** ($\sigma^2$, Unit 4) we already built. The MAP is the **mode**;
+> MCMC estimates the **mean** — they differ because the posterior is skewed, yet the MAP sits inside
+> the MCMC bulk and Laplace matches the MCMC spread (the cross-method specs X1–X2).
+
+# 6. Required interpretation (CERL)
+
+- **I1.** Compare the four methods: cost, accuracy, and when each fails (Laplace on a skewed
+  posterior; MCMC mixing/acceptance).
+- **I2.** Why is the MAP **mode** not the posterior **mean** here, and which should you report?
+- **I3.** From your trace/acceptance, did the chain mix? How would `σ²_proposal` change it?
+
+::: {.callout-note appearance="minimal"}
+**Your answers (I1–I3):**  `%%% YOUR ANSWER HERE %%%`
+:::
+
+# 7–8. Going further & submission
+
+Going further: check the MCMC posterior covariance against the Laplace `(−H)⁻¹` as sample size
+grows. Submission: autograder imports `logistic, gradient, hessian, newton_map,
+laplace_covariance, MetropolisSampler` from `hw` — keep signatures; **seed** the sampler;
+`import hw` cheap. Render with `quarto render unit5.qmd` (Typst, no TeX).
