@@ -58,6 +58,10 @@ assignment.
 
 ## Autograding & integrity (carried over)
 
+- **Python version:** this repo requires **Python ≤ 3.13** (`.python-version` pins **3.11**).
+  The pinned `numpy==2.1.*` has no Python-3.14 wheels; running it on 3.14 triggers C-ABI
+  undefined behaviour (memory corruption in array math). `shared/classroom.yml` pins the CI
+  runner to 3.11 via `actions/setup-python` so the autograder can't reproduce it on students.
 - Tests run via `classroom-resources/autograding-python-grader` (`shared/classroom.yml`),
   `pip install -r requirements.txt`, 10s timeout — same as the original.
 - `make_release` strips solutions between `### SOLUTION START/END ###` (Python) and

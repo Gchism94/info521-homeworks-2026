@@ -1,3 +1,4 @@
+# Requires Python <= 3.13 (numpy 2.1.x has no cp314 wheels); see repo .python-version (3.11)
 numpy==2.1.*
 jupyter
 jupytext
