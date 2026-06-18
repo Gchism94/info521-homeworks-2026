@@ -1,0 +1,134 @@
+---
+title: "Unit 1 — Linear Models & Model Selection"
+subtitle: "Olympic 100m: scalar → matrix normal equations → polynomial + cross-validation"
+format:
+  typst:
+    papersize: us-letter
+    margin: { x: 1.25in, y: 1in }
+jupyter: python3
+---
+
+# 1. Context & purpose
+
+You will fit one dataset — the men's Olympic 100m winning times — **three ways**, each
+deepening the last: scalar least squares (Part A), the **matrix normal equation** (Part B),
+and **polynomial features chosen by cross-validation** (Part C). The same data and model
+carry through, so you see how one idea generalizes rather than three disconnected tasks.
+
+# 2. Learning objectives
+
+| | Objective | Bloom | Assessed by (bundle · spec) |
+|---|-----------|-------|------------------------------|
+| **O1** | Fit the scalar least-squares line via the normal equations | Apply | Correctness · A1–A3 |
+| **O2** | Fit via the **matrix** normal equation `w=(XᵀX)⁻¹Xᵀt`; *apply* the matrix-calculus gradient identities | Apply | Correctness · B1–B2 |
+| **O3** | Build polynomial features with proper **scaling** | Apply | Correctness · C1–C3 |
+| **O4** | Select model order by **cross-validation** | Analyze | Correctness · C4–C6 |
+| **O5** | Interpret the CV curve (bias–variance), extrapolation limits, and when CV misleads | Evaluate | Interpretation · I1–I3 |
+
+# 3. The task (outcome, not recipe)
+
+Produce: (A) the scalar fit; (B) the matrix fit, which **must agree** with the scalar fit at
+order 1; (C) the polynomial fit with the CV-selected order. **Any sound method earns full
+credit** — the closed-form normal equations, `np.linalg.lstsq`, or `np.polyfit`.
+
+# 4. What you may / may not use
+
+Any NumPy linear-algebra routine that yields the least-squares fit. **Seed** the RNG for the
+CV shuffle (`np.random.default_rng(0)`). Do **not** hard-code the target numbers — the tests
+include property checks a constant cannot satisfy.
+
+# 5. How you'll be assessed (criteria shown up front)
+
+Specifications grading — see `specs.md`. Three bundles: **Correctness** (the autograded
+`test_hw.py` specifications; the *core/gateway* bundle — no unit pass without it),
+**Interpretation** (I1–I3, scored Claim/Evidence/Reasoning/Limits), **Process** (seeded, runs
+clean, labeled figures). Any unmet bundle → one **revise-and-resubmit**.
+
+---
+
+## Part A — Scalar least squares
+
+The mean-squared-error loss for $t_n \approx w_0 + w_1 x_n$ is minimized in closed form:
+
+$$ w_1 = \frac{\overline{xt}-\overline{x}\,\overline{t}}{\overline{x^2}-\overline{x}^2},
+\qquad w_0 = \overline{t} - w_1\overline{x}. $$
+
+```{python}
+import numpy as np
+from hw import SimpleLinearModel, PolynomialRegressionModel, scale, run_K_fold_cv, load_data
+
+x, t = load_data()
+scalar = SimpleLinearModel(); scalar.train(x, t)
+print(f"scalar fit:  w0={scalar.w0:.4f}, w1={scalar.w1:.6f}")
+print(f"2012 prediction: {scalar.predict(2012):.4f} s  (actual 2012: 9.63 s)")
+```
+
+## Part B — The matrix normal equation
+
+Stacking the inputs into a design matrix $\mathbf{X}=[\,\mathbf{1}\;\;\mathbf{x}\,]$, the same
+loss is $\mathcal{L}=(\mathbf{t}-\mathbf{Xw})^\top(\mathbf{t}-\mathbf{Xw})$. Setting
+$\nabla_\mathbf{w}\mathcal{L}=\mathbf{0}$ and using the gradient identities
+$\nabla_\mathbf{w}\,\mathbf{w}^\top\mathbf{a}=\mathbf{a}$ and
+$\nabla_\mathbf{w}\,\mathbf{w}^\top\mathbf{C}\mathbf{w}=2\mathbf{C}\mathbf{w}$ (for symmetric
+$\mathbf{C}=\mathbf{X}^\top\mathbf{X}$) gives the **normal equation**
+
+$$ \widehat{\mathbf{w}} = (\mathbf{X}^\top\mathbf{X})^{-1}\mathbf{X}^\top\mathbf{t}. $$
+
+> **These identities are *applied* here and *derived generally in Unit 2b (formerly hw7)*** —
+> we cite them rather than re-derive. The order-1 polynomial model **is** this matrix linear
+> fit, so it must reproduce Part A exactly:
+
+```{python}
+matrix1 = PolynomialRegressionModel(1); matrix1.train(x, t)
+print(f"matrix order-1 2012 prediction: {matrix1.predict(np.array([2012]))[0]:.4f} s")
+print(f"agrees with scalar fit: {np.allclose(matrix1.predict(x), scalar.predict(x))}")
+```
+
+## Part C — Polynomial features, scaling, cross-validation
+
+Higher orders need **scaling** (raw years to the 8th power overflow precision). We scale to
+$[0,1]$, then choose the order by **K-fold cross-validation** (scaling each fold *after* the
+split — scaling before splitting leaks information).
+
+```{python}
+#| label: fig-cv
+#| fig-cap: "5-fold cross-validation loss vs polynomial order (Olympic 100m)."
+import matplotlib.pyplot as plt
+stack = np.random.default_rng(0).permutation(np.column_stack((x, t)))
+cv = run_K_fold_cv(5, 8, stack)
+best = int(np.argmin(cv)) + 1
+fig, ax = plt.subplots(figsize=(5, 3))
+ax.plot(range(1, 9), cv, "o-"); ax.axvline(best, ls="--", color="gray")
+ax.set_xlabel("Polynomial order"); ax.set_ylabel("Mean CV loss")
+ax.set_title(f"CV selects order {best}")
+plt.tight_layout(); plt.show()
+print(f"CV-selected order: {best}")
+```
+
+# 6. Required interpretation (graded by rubric — Claim / Evidence / Reasoning / Limits)
+
+Answer each in 2–4 sentences in the cell below. *An LLM may pre-grade these against the 0–3 ×
+4 rubric and propose per-dimension scores with one-line justifications; a **human confirms
+every score and is final.***
+
+- **I1.** Which order did CV select, and **why**, in bias–variance terms?
+- **I2.** What do the training-vs-validation curves and the CV curve show about **overfitting**? Cite the trend.
+- **I3.** Name one situation in which CV here could **mislead** (small $N$, leakage, non-i.i.d.) and why.
+
+::: {.callout-note appearance="minimal"}
+**Your answer (I1–I3):**
+
+`### YOUR ANSWER HERE ###`
+:::
+
+# 7. Going further (optional, ungraded)
+
+Refit excluding the pre-1900 games; or compare `np.polyfit` to your normal-equation fit and
+confirm they agree to numerical tolerance.
+
+# 8. Submission & reproducibility
+
+The autograder imports `SimpleLinearModel`, `PolynomialRegressionModel`, `scale`,
+`run_K_fold_cv` from `hw` — keep those signatures. Seed the CV shuffle. `import hw` must be
+cheap (no work at import). Run `pytest` locally; render this unit with
+`quarto render unit1.qmd` (Typst backend, no TeX).

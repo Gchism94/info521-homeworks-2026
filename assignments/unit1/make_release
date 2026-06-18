@@ -1,0 +1,12 @@
+#!/bin/sh
+# Unit 1 release: strip solutions from the importable module, ship prompt + specs + tests.
+rm -rf release && mkdir -p release release/images
+
+# Strip ### SOLUTION ### blocks from the importable module (students fill these).
+sed '/^ *### SOLUTION START ###/,/^ *### SOLUTION END ###/d' hw.py > release/hw.py
+
+cp unit1.qmd release/        # the unit prompt/notebook (no solutions live here; it imports hw)
+cp test_hw.py release/       # the autograded Correctness specifications (TILT)
+cp specs.md release/         # the specifications / rubric
+cp data100m.csv release/
+cp requirements.txt release/ 2>/dev/null || true

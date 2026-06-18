@@ -1,0 +1,6 @@
+numpy==2.1.*
+jupyter
+jupytext
+pytest
+pylint
+matplotlib

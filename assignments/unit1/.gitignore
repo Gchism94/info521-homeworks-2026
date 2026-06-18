@@ -1,0 +1,6 @@
+release/
+*_files/
+.quarto/
+unit1.pdf
+unit1.typ
+__pycache__/
