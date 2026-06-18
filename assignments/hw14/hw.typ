@@ -51,10 +51,10 @@ $ frac(partial log f (x), partial x) = frac(1, f (x)) frac(partial f (x), partia
 we get
 $ frac(partial G, partial upright(bold(w))) = t_n (upright(bold(w))^tack.b upright(bold(x))_n)^(- 1) upright(bold(x))_n . $
 
-The gradient of the likelihood (for datum $n$) is then
-$ frac(partial p (t_n \| upright(bold(x))_n , upright(bold(w))), partial upright(bold(w))) = t_n (upright(bold(w))^tack.b upright(bold(x))_n)^(- 1) upright(bold(x))_n - upright(bold(x))_n , $
-and the gradient of the likelihood across all of the data is
-$ frac(partial p (upright(bold(t)) \| upright(bold(X)) , upright(bold(w))), partial upright(bold(w))) = sum_n^N t_n (upright(bold(w))^tack.b upright(bold(x))_n)^(- 1) upright(bold(x))_n - upright(bold(x))_n . $
+The gradient of the log-likelihood (for datum $n$) is then
+$ frac(partial log p (t_n \| upright(bold(x))_n , upright(bold(w))), partial upright(bold(w))) = t_n (upright(bold(w))^tack.b upright(bold(x))_n)^(- 1) upright(bold(x))_n - upright(bold(x))_n , $
+and the gradient of the log-likelihood across all of the data is
+$ frac(partial log p (upright(bold(t)) \| upright(bold(X)) , upright(bold(w))), partial upright(bold(w))) = sum_n^N t_n (upright(bold(w))^tack.b upright(bold(x))_n)^(- 1) upright(bold(x))_n - upright(bold(x))_n . $
 
 Now to finding the gradient of the prior. The log of the zero-mean
 Gaussian with diagonal constant $sigma^2$ covariance is
@@ -71,7 +71,7 @@ $ frac(partial (upright(bold(w))^tack.b upright(bold(x))_n), partial upright(bol
 and again using the fact that
 $upright(bold(w))^tack.b upright(bold(x))_n$ is a scalar, the Hessian
 is:
-$ frac(partial^2 p (upright(bold(w)) \| upright(bold(X)) , sigma^2), partial upright(bold(w)) partial upright(bold(w))^tack.b) = - 1 / sigma^2 upright(bold(I)) + sum_n^N - t_n (upright(bold(w))^tack.b upright(bold(x))_n)^(- 2) upright(bold(x))_n upright(bold(x))_n^tack.b $
+$ frac(partial^2 log p (upright(bold(w)) \| upright(bold(X)) , sigma^2), partial upright(bold(w)) partial upright(bold(w))^tack.b) = - 1 / sigma^2 upright(bold(I)) + sum_n^N - t_n (upright(bold(w))^tack.b upright(bold(x))_n)^(- 2) upright(bold(x))_n upright(bold(x))_n^tack.b $
 
 Now, use the pieces derived above (the gradient and the Hessian) to
 derive the update rules.
@@ -79,14 +79,13 @@ derive the update rules.
 The gradient ascent update rule just flips the subtraction in the
 Widrow-Hoff update to an addition, with step size $alpha$, to get:
 $ upright(bold(w))^((i + 1)) & := upright(bold(w))^((i)) + alpha frac(partial
-log p (upright(bold(w)) \| upright(bold(X)) , sigma^2), partial upright(bold(w))
-partial upright(bold(w))^tack.b)\|_(upright(bold(w^((i)))))\
+log p (upright(bold(w)) \| upright(bold(X)) , sigma^2), partial upright(bold(w)))\|_(upright(bold(w^((i)))))\
  & := upright(bold(w))^((i)) + alpha (- 1 / sigma^2 upright(bold(w))^((i)) +
  sum_n^N t_n (upright(bold(w))^((i) tack.b) upright(bold(x))_n)^(- 1)
  upright(bold(x))_n - upright(bold(x))_n) . $
 
 The Newton-Raphson update is then,
-$ upright(bold(w))^((i + 1)) & := upright(bold(w))^((i)) - (frac(partial^2 p
+$ upright(bold(w))^((i + 1)) & := upright(bold(w))^((i)) - (frac(partial^2 log p
 (upright(bold(w)) \| upright(bold(X)) , sigma^2), partial upright(bold(w))
 partial upright(bold(w))^tack.b)\|_(upright(bold(w))^((i))))^(- 1) (frac(partial
 log p (upright(bold(w)) \| upright(bold(X)) , sigma^2), partial
