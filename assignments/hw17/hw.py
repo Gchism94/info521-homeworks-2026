@@ -14,12 +14,9 @@ Fill in the missing pieces of code at the markers that say
 # %%
 import math
 import numpy as np
-import mplcursors
-from matplotlib import pyplot as plt
-from tqdm import tqdm
 
-# Initialize a random number generator
-RNG = np.random.default_rng()
+# Initialize a random number generator (seeded for reproducibility)
+RNG = np.random.default_rng(521)
 
 # %% [markdown]
 r"""
@@ -46,6 +43,34 @@ def estimate_pi_using_circle(n_samples: int) -> float:
     samples = RNG.uniform(0, 1, (2, n_samples))
     accepted = samples[:, (samples[0]**2 + samples[1]**2) < 1]
     return 4 * (accepted[0].size / samples[0].size)
+    ### SOLUTION END ###
+
+# %% [markdown]
+r"""
+## Sampling in 3 dimensions
+
+(Adapted from FCML Exercise 4.4)
+
+Implement `estimate_pi_using_sphere`. A point drawn uniformly in the unit cube
+$[0,1]^3$ lands in the positive octant of the unit sphere with probability
+$\frac{1}{8}\cdot\frac{4}{3}\pi = \frac{\pi}{6}$, so $\pi \approx 6 \times$ (accepted
+fraction) — the 3-D analogue of the 2-D $\pi \approx 4 \times$ (accepted fraction).
+"""
+
+# %%
+def estimate_pi_using_sphere(n_samples: int) -> float:
+    """Estimate pi using the expression for the volume of a sphere.
+    Args:
+        n_samples: Number of random samples to draw.
+
+    Returns:
+        An estimate of pi.
+    """
+    ### YOUR CODE HERE ###
+    ### SOLUTION START ###
+    samples = RNG.uniform(0, 1, (3, n_samples))
+    accepted = np.sum(samples**2, axis=0) < 1
+    return 6 * (accepted.sum() / n_samples)
     ### SOLUTION END ###
 
 # %% [markdown]
@@ -155,6 +180,8 @@ def plot_samples_needed() -> None:
 
     Saves the figure to 'estimates.pdf'.
     """
+    from matplotlib import pyplot as plt
+    from tqdm import tqdm
     ns = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
     n_samples = 100000
     n_trials = 200
@@ -211,4 +238,5 @@ def plot_samples_needed() -> None:
     plt.savefig("estimates.pdf")
 
 
-plot_samples_needed()
+if __name__ == "__main__":
+    plot_samples_needed()
