@@ -28,8 +28,9 @@ hw13 files are modified; the diffs below are proposed, not applied.**
 
 > **"Any valid route = full credit" → "any Markov-equivalent diagram = full credit."** The
 > reference solution itself says *"If the layout is slightly different but the diagram's semantics
-> are accurate, that is ok."* The rubric formalizes that: **layout, node placement, node shape, and
-> arrow curvature do not matter** (cosmetic); only the variable set, observed/latent status,
+> are accurate, that is ok."* The rubric formalizes that: **layout, node placement, and
+> arrow curvature do not matter** (cosmetic) — **but node *shape* (fixed-value dot vs.
+> random-variable circle) is semantic and graded**; only the variable set, observed/latent status,
 > directed dependencies, and plate scope — i.e. the encoded conditional independencies — are graded.
 > Defensible convention variants are accepted (§2a notes).
 
@@ -70,8 +71,9 @@ logistic regression with a Gaussian prior, using plate notation where appropriat
 encode `p(w, t | X, σ²) = p(w | σ²) ∏ₙ p(tₙ | xₙ, w)`.
 
 **4. Allowed approaches.** **Any diagram whose *semantics* are correct earns full credit** — node
-placement, shape, and layout do not matter, and equivalent conventions are fine (e.g. `σ²` as a
-fixed hyperparameter dot; inputs `xₙ` as fixed nodes rather than shaded random variables, as long
+placement, arrow curvature, and layout do not matter. Use the standard node convention (a
+fixed-value dot for the fixed `σ²`, an open circle for the random `w`); other conventions are fine
+(e.g. inputs `xₙ` as fixed nodes rather than shaded random variables, as long
 as `tₙ` depends on them). State your shading/plate conventions.
 
 **5. How you'll be assessed (criteria shown up front).**
@@ -105,26 +107,40 @@ contract is that the reference solution stays inside the `#answer(…, v(…))` 
 The graph's elements play the role of "steps"; **each is scored on the validity of the modeling
 choice — the conditional independencies it encodes — not on matching the reference's layout.** Any
 **Markov-equivalent** diagram (same encoded independencies) earns full credit; **node placement,
-node shape, and arrow curvature are cosmetic and never cost points.** Each element gets a 0–3 tier
+arrow curvature, and overall layout are cosmetic and never cost points — but node *shape* (a
+filled "fixed-value" dot vs. an open "random-variable" circle) is *semantic* under the standard PGM
+convention and IS graded (see the σ² note and the FLAG below).** Each element gets a 0–3 tier
 mapping to a fraction of its points (3→100%, 2→80%, 1→45%, 0→0%). Weights sum to 60; **S2 (edges)
 heaviest** — the directed edges *are* the model.
 
 | Element | Obj | Pts | 3 — Exemplary | 2 — Proficient | 1 — Developing | 0 |
 |---------|-----|:---:|---------------|----------------|----------------|---|
-| **S1 · Nodes & roles** | O1 | 20 | all variables present — `σ²`, `w`, `xₙ`, `tₙ` — with correct status: `tₙ` (and `xₙ`, by convention) **observed/shaded**, `w` **latent/unshaded**, `σ²` a fixed hyperparameter | all nodes, one role/shading slip | a node missing or two roles wrong | missing/wrong |
+| **S1 · Nodes & roles** | O1 | 20 | all variables present — `σ²`, `w`, `xₙ`, `tₙ` — with correct status: `tₙ` (and `xₙ`, by convention) **observed/shaded**, `w` **latent random / open unshaded circle**, **`σ²` a fixed hyperparameter drawn as a fixed-value node (filled dot / point), NOT a random-variable circle** | all nodes, one role/shading/shape slip | a node missing, or two roles wrong, or `σ²` drawn as a random circle | missing/wrong |
 | **S2 · Edges & directions** | O2 | 24 | the three directed edges correct — `σ²→w`, `w→tₙ`, `xₙ→tₙ` — and **no spurious edges** (no direct `σ²→tₙ`, no `w→xₙ`, none among the `tₙ`) | edges right, one direction loose or one extra/missing edge | only the `w→tₙ` likelihood edge | missing/wrong |
 | **S3 · Plate scope** | O3 | 16 | a plate over `n=1..N` encloses **exactly** the per-point nodes (`tₙ`, and `xₙ` if drawn as random) and **excludes** the shared `w`, `σ²`; labeled `N` | plate present, label or one boundary slightly off | plate drawn but scope wrong (encloses `w`) | missing |
 
 **Accepted convention variants (full credit):** `xₙ` drawn as a shaded random node *or* as a fixed
 input node outside/at the plate edge (logistic regression is discriminative — `xₙ` is conditioned
-on, not modeled); `σ²` as a small solid "fixed" dot *or* an unshaded circle; plate corner labeled
-`N` or `n=1…N`; any layout/orientation.
+on, not modeled); plate corner labeled `N` or `n=1…N`; any layout/orientation.
+
+> **σ² shape is a graded distinction, NOT a cosmetic variant (FIXED in this audit; FLAGGED).**
+> Under the standard PGM convention node *shape* is semantic — a **fixed-value dot/point** marks a
+> non-random (conditioned-on) quantity, an **open circle** a random variable. The model conditions
+> on `σ²` (it appears in `p(w | σ²)` and is not inferred), so `σ²` is **fixed** and should be a dot,
+> *distinct in shape* from the random-variable circle for `w`. Drawing `σ²` as a random circle
+> misstates its status and loses an S1 tier. **The reference `hw.typ` diagram currently draws `σ²`
+> as a circle (same `node-shape: circle` as `w`)** — under the strict convention that is itself
+> non-standard. **Flagged for the instructor to confirm against the course's node convention:** if
+> the course does *not* use the dot/circle fixed-vs-random distinction, revert this to a cosmetic
+> variant and (optionally) leave the reference as-is; if it does, the reference diagram should mark
+> `σ²` as a fixed-value node.
 
 **Load-bearing vs. cosmetic (the key distinction):** an element is **load-bearing** exactly when
 changing it changes the **independence semantics**. A **missing or extra edge**, a **reversed
 edge**, or a **wrong plate boundary** all alter what the graph asserts → load-bearing, penalized.
-**Node placement, node shape, arrow curvature, and overall layout do not change the encoded
-independencies → cosmetic, never penalized.** Concretely:
+**Node placement, arrow curvature, and overall layout do not change the encoded independencies →
+cosmetic, never penalized. Node *shape* is the exception: a fixed-value dot vs. a random-variable
+circle is semantic (the σ² distinction above) and IS graded.** Concretely:
 - **S1 is load-bearing for the values** — a missing variable breaks the edges and plate that refer
   to it — but the three elements are graded on the student's *own* node set: an `S1` shading slip
   does not also cost `S2`/`S3` if the dependencies and scope are otherwise right.
@@ -188,9 +204,10 @@ boundary are untouched.
  plate notation wherever appropriate.
 +
 +#strong[Allowed approaches.] Any diagram whose #emph[semantics] are correct earns
-+full credit — exact node placement, shape, and layout do not matter, and
-+equivalent conventions are fine (e.g. drawing $sigma^2$ as a fixed hyperparameter
-+dot, or treating the inputs $bold(x)_n$ as fixed nodes rather than shaded random
++full credit — exact node placement, arrow curvature, and layout do not matter. Use
++the standard node convention (a fixed-value dot for the fixed $sigma^2$, an open
++circle for the random $bold(w)$); other conventions are fine (e.g. treating the
++inputs $bold(x)_n$ as fixed nodes rather than shaded random
 +variables, as long as $t_n$ depends on them). What is graded is the set of
 +variables and their observed / latent status, the directed dependencies, and the
 +plate scope. State your shading / plate conventions. Grading criteria are in
@@ -284,9 +301,10 @@ boundary are untouched.
 +
 +## 4. Allowed approaches
 +
-+**Any diagram whose *semantics* are correct earns full credit** — placement, shape, and layout do
-+not matter; equivalent conventions are fine (`σ²` as a fixed dot; `xₙ` as fixed inputs, as long as
-+`tₙ` depends on them). State your shading/plate conventions.
++**Any diagram whose *semantics* are correct earns full credit** — placement, arrow curvature, and
++layout do not matter. Use the standard node convention (a fixed-value dot for the fixed `σ²`, an
++open circle for the random `w`); `xₙ` as fixed inputs is fine, as long as `tₙ` depends on them.
++State your shading/plate conventions.
 +
 +## 5. How you'll be assessed (criteria shown up front)
 +
@@ -332,13 +350,14 @@ boundary are untouched.
 +
 +The graph's elements play the role of "steps"; each scored on the **conditional independencies it
 +encodes**, not on this key's layout. **Any Markov-equivalent diagram (same encoded independencies)
-+earns full credit; node placement, shape, and arrow curvature are cosmetic and never cost points.**
-+Tiers map to a fraction of each element's points (3→100%, 2→80%, 1→45%, 0→0%). S2 (edges) heaviest
-+— the edges are the model.
++earns full credit; node placement, arrow curvature, and layout are cosmetic and never cost points.
++Node *shape* is the exception: a fixed-value dot vs. a random-variable circle is semantic and IS
++graded (σ² is fixed → a dot, not a circle).** Tiers map to a fraction of each element's points
++(3→100%, 2→80%, 1→45%, 0→0%). S2 (edges) heaviest — the edges are the model.
 +
 +| Element | Obj | Pts | 3 — Exemplary | 2 — Proficient | 1 — Developing | 0 |
 +|---------|-----|:---:|---------------|----------------|----------------|---|
-+| **S1 · Nodes & roles** | O1 | 20 | `σ²`, `w`, `xₙ`, `tₙ` present; `tₙ`/`xₙ` observed-shaded, `w` latent, `σ²` fixed hyperparameter | one role/shading slip | a node missing or two roles wrong | missing |
++| **S1 · Nodes & roles** | O1 | 20 | `σ²`, `w`, `xₙ`, `tₙ` present; `tₙ`/`xₙ` observed-shaded, `w` latent (open circle), `σ²` fixed hyperparameter drawn as a fixed-value dot (NOT a random circle) | one role/shading/shape slip | a node missing, two roles wrong, or σ² as a random circle | missing |
 +| **S2 · Edges & directions** | O2 | 24 | `σ²→w`, `w→tₙ`, `xₙ→tₙ`; no spurious edges (no `σ²→tₙ`, `w→xₙ`, none among `tₙ`) | one direction loose / one extra-missing edge | only `w→tₙ` | missing |
 +| **S3 · Plate scope** | O3 | 16 | plate over `n=1..N` encloses the per-point nodes, excludes shared `w`,`σ²`; labeled `N` | label/boundary slightly off | scope wrong (encloses `w`) | missing |
 +
@@ -347,7 +366,8 @@ boundary are untouched.
 +
 +**Load-bearing vs. cosmetic.** An element is load-bearing exactly when changing it changes the
 +independence semantics: a **missing/extra/reversed edge** or a **wrong plate boundary** are
-+penalized; **placement, shape, curvature, and layout are cosmetic and are not.** S1 is load-bearing
++penalized; **placement, curvature, and layout are cosmetic and are not — but node shape (fixed dot
++vs random circle) is semantic and IS graded (σ²).** S1 is load-bearing
 +for the values (a missing node breaks edges and plate) but the three elements are graded on the
 +student's own node set. S2 is the heart, and **the absence of edges among the `tₙ` is itself
 +load-bearing** (it encodes conditional independence). S3's load-bearing point is **`w` outside the
@@ -405,9 +425,16 @@ load is small. The optional "σ² also unknown" extension (§7) stays ungraded.
    **per-element** structural rubric (S1 nodes, S2 edges, S3 plate); Interpretation (30) is CERL on
    the conditional-independence semantics. This is the rollout map's recommended adaptation, mapped
    onto the standard 60/30/10 so hw13 stays consistent with the cluster.
-2. **"Any valid route" → "any semantically-equivalent diagram."** Formalizes the reference's own
-   "layout may differ if semantics are accurate" into the rubric (layout/shape/placement ignored;
-   accepted convention variants listed) — the structural analogue of full credit for any sound route.
+2. **"Any valid route" → "any Markov-equivalent diagram."** Formalizes the reference's own
+   "layout may differ if semantics are accurate" into the rubric (layout/placement/curvature
+   ignored; node *shape* — fixed dot vs random circle — is semantic and graded) — the structural
+   analogue of full credit for any sound route.
+2b. **σ² node-shape correction (Phase-2 audit, FLAGGED).** Node shape is semantic under the standard
+   PGM convention (dot = fixed, circle = random); σ² is conditioned on (fixed), so it must be a
+   fixed-value dot, distinct from w's random circle. Removed "σ² dot-vs-circle" from the accepted
+   cosmetic variants and made it a graded S1 distinction. The reference `hw.typ` draws σ² as a
+   circle — flagged for the instructor to confirm against the course's node convention (revert to
+   cosmetic if the course does not use the dot/circle distinction).
 3. **Typst `#answer` with `v(4in)`/`v(2in)` fallbacks.** Unlike hw7/8/9/12 (`[]` fallback), hw13's
    fallback is *drawing/writing space*. The diagram answer's `v(4in)` is preserved; the new
    reference-interpretation answer uses `v(2in)`. The `#answer` first argument is still the strip
@@ -456,8 +483,9 @@ hw13 overhaul: adapted structural + CERL rubric for the PGM diagram (written)
 - STEP 0: classified STRUCTURE + INTERPRETATION (construct-an-artifact then read
   it), not a derivation and not pure interpretation.
 - hw.typ: rewrite the prompt to the 8-part template — add an Allowed-approaches
-  note ("any Markov-equivalent diagram = full credit"; layout/placement/shape/arrow
-  curvature are cosmetic) and a Required-interpretation prompt, both outside
+  note ("any Markov-equivalent diagram = full credit"; layout/placement/arrow
+  curvature are cosmetic, but node SHAPE — fixed dot vs random circle — is semantic)
+  and a Required-interpretation prompt, both outside
   #answer; replaces the 1/0.5/0 gate. Add a reference-interpretation #answer block
   (fallback v(2in) = writing space) and a Workload/Acknowledgments section (absent
   before; matches the rest of the written cluster). The reference #diagram is
@@ -468,11 +496,13 @@ hw13 overhaul: adapted structural + CERL rubric for the PGM diagram (written)
   independencies the diagram ENCODES; S2 heaviest (edges are the model).
   Load-bearing = anything that changes the independence semantics (missing/extra/
   reversed edge, wrong plate boundary), e.g. "no edges among t_n" (conditional
-  independence) and "w outside the plate" (shared parameter); placement/shape/
-  curvature are cosmetic and never penalized. Interpretation 30 = CERL on reading
-  the conditional independencies / d-separations; Process 10 = legend + layout.
-  Accepted Markov-equivalent variants (x_n fixed-vs-shaded, sigma^2 dot-vs-circle)
-  listed for full credit.
+  independence) and "w outside the plate" (shared parameter); placement/curvature/
+  layout are cosmetic and never penalized -- but node SHAPE (fixed dot vs random
+  circle) is semantic and graded. Interpretation 30 = CERL on reading the
+  conditional independencies / d-separations; Process 10 = legend + layout.
+  Accepted Markov-equivalent variant: x_n fixed-vs-shaded. NOTE: sigma^2 must be a
+  fixed-value node (dot), not a random circle -- a graded distinction, FLAGGED for
+  instructor confirmation against the course's node convention.
 - source churn: reference diagram untouched; only framing blocks + a reference
   interpretation + Workload/Ack added. All answer content stays inside the #answer
   first argument (Typst strip boundary, fallback v(4in)/v(2in) = blank space), so
