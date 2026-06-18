@@ -1,0 +1,126 @@
+---
+title: "Unit 3 — Monte Carlo & Estimators"
+subtitle: "Analytic vs Monte-Carlo expectations · estimating π in 2-D/3-D/n-D · the curse of dimensionality"
+format:
+  typst:
+    papersize: us-letter
+    margin: { x: 1.25in, y: 1in }
+jupyter: python3
+---
+
+# 1. Context & purpose
+
+Estimating things by **sampling**: an expectation `E[f(X)]` (analytic vs Monte Carlo) and the
+constant **π** (rejection sampling in 2-D, 3-D, n-D). The payoff is seeing the universal
+`O(1/√N)` convergence and the **curse of dimensionality** — acceptance collapses with dimension,
+so the same accuracy costs exponentially more samples.
+
+# 2. Learning objectives
+
+| | Objective | Bloom | Bundle · spec |
+|---|-----------|-------|----------------|
+| **O1** | Compute `E[f(X)]` analytically; approximate it by Monte Carlo | Apply | Correctness · A1–A2 (code) + D1 (derivation) |
+| **O2** | Estimate π by rejection sampling in 2-D/3-D/n-D | Apply | Correctness · B1–B5 (code) + D2 (derivations) |
+| **O3** | Demonstrate `O(1/√N)` convergence and the curse of dimensionality | Analyze | Correctness · A2,B5 + Interpretation |
+| **O4** | Interpret estimator variance vs sample size; why higher-D is harder | Evaluate | Interpretation · I1–I2 |
+
+# 3–5. Task, allowed approaches, assessment
+
+Implement the estimators (any correct sampler passes — tests are convergence/property/
+floor-AND-guard, never pinned draws); derive `E[f(X)]` and the π formulas. Specifications grading
+(`specs.md`). **Correctness (core/gateway) mixes autograded code (hw6/hw17) and human per-step
+derivations (the analytic expectation + the π formulas).** Interpretation + Process are separate
+bundles; any unmet bundle → one revise-and-resubmit.
+
+---
+
+## Part A — Monte-Carlo expectation  *(code + derivation)*
+
+For $X\sim U(-1,9)$ and $f(x)=35+3x-3x^2+0.2x^3+0.01x^4$, estimate $E[f(X)]$ by averaging $f$ over
+samples, and watch it converge to the analytic value.
+
+```{python}
+import numpy as np, matplotlib.pyplot as plt
+from hw import monte_carlo_expectation, running_expectation, estimate_pi_using_circle, \
+    estimate_pi_using_sphere, estimate_pi_using_n_ball, number_of_orthants
+
+rng = np.random.default_rng(0)
+print(f"Monte-Carlo E[f(X)] (200k samples): {monte_carlo_expectation(200000, rng):.4f}   (analytic 18.61)")
+```
+
+```{python}
+#| label: fig-converge
+#| fig-cap: "Running Monte-Carlo estimate of E[f(X)] converging to the analytic 18.61."
+seq = running_expectation(5000, np.random.default_rng(0))
+fig, ax = plt.subplots(figsize=(5, 2.6))
+ax.plot(seq, lw=0.8); ax.axhline(18.61, color="r", ls="--", label="analytic 18.61")
+ax.set_xlabel("samples"); ax.set_ylabel("estimate"); ax.legend(); plt.tight_layout(); plt.show()
+```
+
+**D1 — derive the analytic value.**
+
+::: {.callout-note appearance="minimal"}
+**Your derivation (D1):**  `%%% YOUR ANSWER HERE %%%`
+:::
+
+<!-- SOLUTION START -->
+::: {.callout-tip title="Reference (instructor)"}
+$E[f(X)]=\int_{-1}^{9} f(x)\,\frac{1}{9-(-1)}\,dx=\frac{1}{10}\big[35x+\tfrac32x^2-x^3+0.05x^4+0.002x^5\big]_{-1}^{9}
+=\frac{186.1}{10}=\boxed{18.61}.$
+:::
+<!-- SOLUTION END -->
+
+## Part B — Estimating π by sampling  *(code + derivations)*
+
+```{python}
+#| label: fig-curse
+#| fig-cap: "Mean |π̂−π| vs samples for several dimensions (log-log): same −1/2 slope, higher-D worse."
+fig, ax = plt.subplots(figsize=(5, 3))
+Ns = np.unique(np.logspace(1, 4, 25).astype(int))
+for n in (2, 4, 6, 8):
+    err = [np.mean([abs(estimate_pi_using_n_ball(n, N + 1, np.random.default_rng(s))[-1] - np.pi)
+                    for s in range(8)]) for N in Ns]
+    ax.plot(Ns, err, "o-", ms=2, label=f"D={n}")
+ax.set_xscale("log"); ax.set_yscale("log"); ax.legend(fontsize=7)
+ax.set_xlabel("samples"); ax.set_ylabel(r"mean $|\hat\pi-\pi|$"); plt.tight_layout(); plt.show()
+```
+
+**D2 — derive the estimators.** 2-D: `π = 4·(in-circle fraction)`. 3-D: `π = 6·(in-sphere
+fraction)`. n-D: `π = (2ⁿ·V_o·Γ(n/2+1))^(2/n)`.
+
+::: {.callout-note appearance="minimal"}
+**Your derivations (D2):**  `%%% YOUR ANSWER HERE %%%`
+:::
+
+<!-- SOLUTION START -->
+::: {.callout-tip title="Reference (instructor)"}
+**2-D:** area of the unit circle $=\pi$; a point in $[0,1]^2$ is accepted with prob = quarter-circle
+area $=\pi/4$, so $\pi=4\cdot(\text{accepted fraction})$.
+**3-D:** $V=\tfrac43\pi$; a point in $[0,1]^3$ is accepted with prob $\tfrac18\cdot\tfrac43\pi=\pi/6$,
+so $\pi=6\cdot(\text{accepted fraction})$.
+**n-D:** $V_n=\dfrac{\pi^{n/2}}{\Gamma(n/2+1)}$; with $V_o$ the orthant fraction,
+$\pi^{n/2}=2^n V_o\,\Gamma(n/2+1)$, so $\pi=(2^n V_o\,\Gamma(n/2+1))^{2/n}$.
+:::
+<!-- SOLUTION END -->
+
+> **Through-line.** Both halves are Monte-Carlo estimation; all stochastic checks are
+> convergence/distributional (never pinned draws). The curse of dimensionality — acceptance
+> $\propto$ orthant volume falls with $n$ — is why higher-D curves sit higher at the same `N`.
+
+# 6. Required interpretation (CERL)
+
+- **I1.** From your convergence plot, what is the empirical convergence rate, and how does
+  estimator error scale with sample size?
+- **I2.** Why do higher dimensions need exponentially more samples (the curse)? Tie it to the
+  acceptance rate.
+
+::: {.callout-note appearance="minimal"}
+**Your answers (I1–I2):**  `%%% YOUR ANSWER HERE %%%`
+:::
+
+# 7–8. Going further & submission
+
+Going further: estimate, per dimension, the `N` needed for `|π̂−π|<0.1`. Submission: autograder
+imports `f, monte_carlo_expectation, estimate_pi_using_circle/sphere/n_ball, number_of_orthants`
+from `hw` — keep signatures; **seed** the RNG; `import hw` cheap. Render with `quarto render
+unit3.qmd` (Typst, no TeX).
