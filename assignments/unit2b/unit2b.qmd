@@ -1,0 +1,130 @@
+---
+title: "Unit 2b — Probability & Estimation Foundations (II)"
+subtitle: "Matrix calculus (Jacobian identities) · Gaussian independence · MLE unbiasedness · Beta moments"
+format:
+  typst:
+    papersize: us-letter
+    margin: { x: 1.25in, y: 1in }
+---
+
+# 1. Context & purpose
+
+The matrix-calculus identities and distributional results the rest of the course leans on.
+**Part A** derives the gradient identities **applied** in Unit 1 (the normal equation) and used
+again for the Newton–Raphson Hessian (Unit 5). **Part B** establishes Gaussian independence,
+proves the Unit-2a MLE is unbiased, and derives the Beta moments that power the conjugate priors
+of Unit 4.
+
+# 2. Learning objectives
+
+| | Objective | Bloom | Bundle · spec |
+|---|-----------|-------|----------------|
+| **O1** | Derive the Jacobian identities `∂w/∂w=I`, `∂/∂wᵀ f=(∂f/∂w)ᵀ`, `∂/∂wᵀ(Cw)=C` | Apply/Analyze | Correctness · A1–A3 |
+| **O2** | Show a diagonal-covariance Gaussian factorizes into independent univariate Gaussians | Analyze | Correctness · B1 |
+| **O3** | Prove the Bernoulli MLE `r̂` is unbiased | Apply | Correctness · B2 |
+| **O4** | Derive the Beta mean and variance | Analyze | Correctness · B3–B4 |
+| **O5** | Interpret: where symmetry matters; unbiasedness vs. variance; Beta as a prior | Evaluate | Interpretation · I1–I3 |
+
+# 3. The task
+
+Derive all seven results. **Any valid route earns full credit** (explicit components or the
+Kronecker-delta form for Part A; for B4, `var = E[r²] − (E[r])²`).
+
+# 4. What you may / may not use
+
+Standard matrix calculus and the gamma identity `Γ(n+1)=nΓ(n)`. State your assumptions
+(symmetry of `C` in A3; i.i.d. and `E[xₙ]=r` in B2; `α,β>0` in B3–B4).
+
+# 5. How you'll be assessed
+
+Specifications grading (`specs.md`) — **this unit is written-only, so the entire Correctness /
+gateway bundle is graded per-step by a human** (each step met at *Proficient+*); same bundle
+structure as Unit 1, all `Verified by: human`. Interpretation (I1–I3, CERL) and Process
+(notation/assumptions, legibility) are separate bundles. Any unmet bundle → one
+revise-and-resubmit. *No autograder — the shared `classroom.yml` skips pytest for written units.*
+
+---
+
+## Part A — Matrix-calculus (Jacobian) identities
+
+> These are the identities **Unit 1 applied** to obtain the normal equation
+> `ŵ=(XᵀX)⁻¹Xᵀt`; here we derive them generally. A3 reappears in **Unit 5** as the Hessian term.
+
+**A1.** `∂w/∂w = I`. **A2.** for scalar `f`, `∂/∂wᵀ f = (∂f/∂w)ᵀ`. **A3.** `∂/∂wᵀ(Cw)=C`.
+
+::: {.callout-note appearance="minimal"}
+**Your derivations (A1–A3):**  `%%% YOUR ANSWER HERE %%%`
+:::
+
+<!-- SOLUTION START -->
+::: {.callout-tip title="Reference derivation (instructor)"}
+**A1.** The $(i,j)$ entry of $\partial\mathbf{w}/\partial\mathbf{w}$ is
+$\partial w_i/\partial w_j=\delta_{ij}$, i.e. $\mathbf{I}$.
+
+**A2.** $\partial/\partial\mathbf{w}^\top f=[\partial f/\partial w_1,\dots,\partial f/\partial w_D]$
+is a **row** vector; $\partial f/\partial\mathbf{w}$ is the **column** of the same partials, so one
+is the transpose of the other.
+
+**A3.** $(\mathbf{Cw})_i=\sum_j C_{ij}w_j$, so
+$\partial (\mathbf{Cw})_i/\partial w_k=\sum_j C_{ij}\delta_{jk}=C_{ik}$; assembling over $(i,k)$
+gives $\boxed{\;\partial/\partial\mathbf{w}^\top(\mathbf{Cw})=\mathbf{C}\;}$.
+:::
+<!-- SOLUTION END -->
+
+## Part B — Gaussian independence, MLE unbiasedness, Beta moments
+
+**B1.** A diagonal $\boldsymbol\Sigma=\mathrm{diag}(\sigma_1^2,\dots,\sigma_D^2)$ makes the
+$D$-variate Gaussian a product of independent univariate Gaussians.
+**B2.** The Bernoulli MLE $\hat r=\frac1N\sum_n x_n$ (Unit 2a) is unbiased.
+**B3/B4.** The Beta$(\alpha,\beta)$ mean and variance.
+
+::: {.callout-note appearance="minimal"}
+**Your derivations (B1–B4):**  `%%% YOUR ANSWER HERE %%%`
+:::
+
+<!-- SOLUTION START -->
+::: {.callout-tip title="Reference derivation (instructor)"}
+**B1.** $|\boldsymbol\Sigma|=\prod_d\sigma_d^2$ and $\boldsymbol\Sigma^{-1}=\mathrm{diag}(1/\sigma_d^2)$,
+so the quadratic form is $\sum_d (x_d-\mu_d)^2/\sigma_d^2$ and (exp of a sum = product of exps)
+$p(\mathbf{w})=\prod_{d=1}^D \frac{1}{\sqrt{2\pi\sigma_d^2}}\exp\!\Big(-\frac{(x_d-\mu_d)^2}{2\sigma_d^2}\Big)$
+— a product of univariate Gaussians ⇒ independence.
+
+**B2.** $\mathbb{E}[\hat r]=\mathbb{E}\big[\tfrac1N\sum_n x_n\big]=\tfrac1N\sum_n\mathbb{E}[x_n]
+=\tfrac1N\,(Nr)=r$ (linearity; $\mathbb{E}[x_n]=r$). Unbiased.
+
+**B3.** $\mathbb{E}[r]=\int_0^1 r\,\frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}
+r^{\alpha-1}(1-r)^{\beta-1}dr=\frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}
+\frac{\Gamma(\alpha+1)\Gamma(\beta)}{\Gamma(\alpha+\beta+1)}=\boxed{\dfrac{\alpha}{\alpha+\beta}}$
+(using $\Gamma(n+1)=n\Gamma(n)$).
+
+**B4.** Similarly $\mathbb{E}[r^2]=\dfrac{\alpha(\alpha+1)}{(\alpha+\beta)(\alpha+\beta+1)}$, so
+$\mathrm{var}(r)=\mathbb{E}[r^2]-(\mathbb{E}[r])^2=\boxed{\dfrac{\alpha\beta}{(\alpha+\beta)^2(\alpha+\beta+1)}}.$
+:::
+<!-- SOLUTION END -->
+
+> **Through-lines.** A1–A3 ↔ Unit 1 (normal equation) and Unit 5 (Newton Hessian). B2 builds on
+> the Unit-2a MLE. B3–B4 are the moments of the **Beta** — the conjugate prior for a probability
+> in **Unit 4** (and the posterior of the coin game).
+
+# 6. Required interpretation (CERL)
+
+*LLM may pre-grade; human confirms and is final.*
+
+- **I1.** Why does A3 need `C` **symmetric** in the squared-form `∂/∂wᵀ(wᵀCw)` case, and where are
+  these identities used downstream?
+- **I2.** What does **unbiasedness** guarantee — and what does it *not* (variance, consistency)?
+- **I3.** Read `α,β` as prior pseudo-counts: what happens to the Beta mean/variance as `α+β→∞`,
+  and why does that make Beta a natural **prior** for a probability?
+
+::: {.callout-note appearance="minimal"}
+**Your answers (I1–I3):**  `%%% YOUR ANSWER HERE %%%`
+:::
+
+# 7. Going further (optional)
+
+State `∂/∂wᵀ(wᵀCw)=wᵀ(C+Cᵀ)` for general `C` and confirm it reduces to `2wᵀC` when `C=Cᵀ`.
+
+# 8. Submission & reproducibility
+
+Written unit — render with `quarto render unit2b.qmd` (Typst, no TeX); submit the derivations.
+Keep notation consistent and state every assumption.

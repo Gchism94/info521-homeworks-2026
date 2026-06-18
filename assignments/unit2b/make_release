@@ -1,0 +1,6 @@
+#!/bin/sh
+# Unit 2b release (written-only): strip the .qmd reference derivations; ship prompt + specs.
+rm -rf release && mkdir -p release
+sed '/<!-- SOLUTION START -->/,/<!-- SOLUTION END -->/d' unit2b.qmd > release/unit2b.qmd
+cp specs.md release/
+# No hw.py / test_hw.py: written-only -> the shared classroom.yml skips pytest.
