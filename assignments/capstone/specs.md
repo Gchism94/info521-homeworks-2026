@@ -17,16 +17,21 @@ PASS rule: **every MUST-MEET met, and ≤ 1 missed among the independent specs.*
 | **R1** code runs; `predict`/`predictive_std` return finite, correctly-shaped output | runnable | `test_runs_and_shapes` | MUST-MEET |
 | **V1** the model fits — beats the constant-mean baseline | method validity | `test_model_fits_beats_baseline` | MUST-MEET |
 | **V2** predictive std ≥ 0; posterior covariance symmetric PSD | method validity | `test_uncertainty_nonneg_and_cov_psd` | MUST-MEET |
-| **C1** uncertainty grows in the gap / extrapolation vs dense data | internal consistency | `test_uncertainty_grows_off_data` | MUST-MEET (the point of the task) |
+| **C1** predictive std grows under **extrapolation** vs the dense-data region | internal consistency | `test_uncertainty_grows_off_data` | MUST-MEET (the point of the task) |
 | **C2** predictive std ≥ the model's own noise floor | internal consistency | `test_predictive_std_exceeds_noise_floor` | independent |
 
 4 MUST-MEET (R1, V1, V2, C1) + 1 independent (C2); threshold ≤ 1.
+
+> **C1 is extrapolation-only.** Growth in the *interior gap* [0.5, 2.0] is method-dependent (a
+> smooth model may interpolate a narrow gap confidently), so it is **not a floor** — it moved to
+> **Interpretation (I1)**, where students must describe and *justify* their method's gap behaviour.
+> Extrapolation growth, by contrast, is shared by every valid parameter-uncertainty method.
 
 ## Bundle 2 — Interpretation  (CERL + ethics; LLM-pre-grade + human-confirm)
 
 | Spec | Prompt | PASS when… |
 |------|--------|-----------|
-| **I1** | results: fit + where/why uncertainty is large/small + real limits | ≥2 on every CERL dimension |
+| **I1** | results: fit + where/why uncertainty is large/small + real limits + **describe the method's predictive uncertainty in the [0.5, 2.0] gap and justify why it does or does not grow there** | ≥2 on every CERL dimension |
 | **I2** | ethics/impact of acting on the (over-confident) predictions + one safeguard | ≥2 on every CERL dimension |
 
 Bundle PASS = both (each load-bearing for O4). Human confirms; the ethics note is required, not optional.

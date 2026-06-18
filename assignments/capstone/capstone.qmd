@@ -33,9 +33,15 @@ Implement the `BayesianModel` contract in `hw.py` (`fit`, `predict`, `predictive
 
 # 4. What you may / may not use
 
-Any model (linear/polynomial features, GP, logistic if you reframe it) and any Bayesian
-uncertainty method from Units 4–5. **Seed** any RNG. You may not hard-code outputs — the autograder
-checks *properties of your method*, not a specific number.
+Pick any Bayesian uncertainty method you were taught:
+
+- **Bayesian linear regression** — conjugate / closed-form posterior + predictive variance (**Unit 4**).
+- **Laplace approximation** — Gaussian fit at the MAP (**Unit 5**).
+- **MCMC-sampled posterior predictive** — propagate parameter draws through the model (**Unit 5**).
+
+These are pointers, not a fence: **any valid method that propagates parameter uncertainty is
+acceptable.** **Seed** any RNG. You may not hard-code outputs — the autograder checks *properties of
+your method*, not a specific number.
 
 # 5. How you'll be assessed (criteria up front)
 
@@ -77,8 +83,10 @@ print("posterior_cov PSD:", np.all(np.linalg.eigvalsh(np.asarray(m.posterior_cov
 # 6. Required report (CERL + ethics)
 
 Write ~1 page. **I1 (results, CERL):** what does your model say; cite the fit and the uncertainty
-(where is it large/small and *why*); state the real limits (the data gap, extrapolation, model
-mis-specification). **I2 (ethics/impact):** if a decision were made from these predictions, who is
+(where is it large/small and *why*); **describe your method's predictive uncertainty in the
+[0.5, 2.0] gap and justify why it does or does not grow there** (this is method-dependent, not a
+floor — a smooth model may interpolate the gap confidently); state the real limits (extrapolation,
+model mis-specification). **I2 (ethics/impact):** if a decision were made from these predictions, who is
 affected by the *uncertainty* — and what would acting on the over-confident regions risk? Name one
 safeguard.
 
