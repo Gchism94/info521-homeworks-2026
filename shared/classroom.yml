@@ -18,15 +18,30 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: '3.11'
+    # Written-only units (e.g. U2b) have no test_hw.py and are rubric-graded. Detect that
+    # so the pytest grader + reporter are skipped instead of failing on "no tests".
+    - name: Detect tests
+      id: detect
+      run: |
+        if [ -f test_hw.py ]; then
+          echo "has_tests=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "has_tests=false" >> "$GITHUB_OUTPUT"
+        fi
     - name: Correctness
       id: correctness
+      if: steps.detect.outputs.has_tests == 'true'
       uses: classroom-resources/autograding-python-grader@v1
       with:
         timeout: 10
         setup-command: pip install -r requirements.txt
     - name: Autograding Reporter
+      if: steps.detect.outputs.has_tests == 'true'
       uses: classroom-resources/autograding-grading-reporter@v1
       env:
         CORRECTNESS_RESULTS: "${{steps.correctness.outputs.result}}"
       with:
         runners: correctness
+    - name: Written-only (no autograder)
+      if: steps.detect.outputs.has_tests == 'false'
+      run: echo "This unit is rubric-graded (no test_hw.py); no autograder to run."
