@@ -1,0 +1,57 @@
+---
+title: "Unit 0 — Tooling & Reproducibility"
+subtitle: "GitHub Classroom · pytest · the SOLUTION-marker workflow · the seed policy"
+format:
+  typst:
+    papersize: us-letter
+    margin: { x: 1.25in, y: 1in }
+jupyter: python3
+---
+
+# 1. Context & purpose
+
+Set up the pipeline so everything after this "just works": clone, run `pytest`, fill a function,
+render this unit, commit/push. You also learn the **seed policy** — seed every RNG — which every
+later unit assumes. No course content depends on difficulty here; the point is a working pipeline.
+
+# 2–5. What you'll do & how it's assessed (completion-based)
+
+Onboarding is **completion-graded** (the documented exception to the analytic split — there is no
+model to gate and nothing to interpret). Each task is **complete / not-yet** with one
+revise-and-resubmit; see `specs.md`:
+
+1. **`add`** passes `pytest` (the autograder + the SOLUTION-marker workflow).
+2. **Seed policy** (graded Process spec): `seeded_draw` is reproducible — same seed → same draw.
+3. **LaTeX/onboarding**: the power-rule derivative below, and the syllabus checkboxes, completed.
+4. **Workflow**: committed + pushed via Classroom.
+
+```{python}
+from hw import add, seeded_draw
+print("add(2, 3) =", add(2, 3))
+a, b = seeded_draw(0, 5), seeded_draw(0, 5)
+print("seeded_draw(0,5) reproducible:", (a == b).all())   # the seed policy in one line
+```
+
+# Onboarding exercise
+
+**Power rule.** Given $f(x)=x^n$, $\dfrac{df}{dx}= \;$ `%%% YOUR ANSWER HERE %%%`
+
+<!-- SOLUTION START -->
+::: {.callout-tip title="Reference"}
+$\dfrac{df}{dx}=n\,x^{\,n-1}.$
+:::
+<!-- SOLUTION END -->
+
+**Week-1 checklist** (tick each): ☐ read the syllabus · ☐ read the academic-integrity policy ·
+☐ installed the toolchain and ran `pytest`.
+
+# 6. Reproducibility note (the through-line)
+
+Seeding is taught **once** here and **assumed everywhere after** (Units 3 and 5 grade it as a
+Process spec). An unseeded RNG makes results irreproducible and un-gradeable.
+
+# 7–8. Going further & submission
+
+Going further: open `hw.py` as a notebook and confirm the SOLUTION markers are what
+`make_release` strips. Submission: autograder imports `add`, `seeded_draw` from `hw`; render with
+`quarto render unit0.qmd` (Typst, no TeX); commit + push via Classroom.
