@@ -1,0 +1,6 @@
+release/
+*_files/
+.quarto/
+capstone.pdf
+capstone.typ
+__pycache__/

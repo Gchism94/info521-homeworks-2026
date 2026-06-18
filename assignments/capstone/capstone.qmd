@@ -1,0 +1,94 @@
+---
+title: "Capstone — Open Bayesian Modelling with Uncertainty"
+subtitle: "Choose a model · fit it · quantify uncertainty · report results + ethics"
+format:
+  typst:
+    papersize: us-letter
+    margin: { x: 1.25in, y: 1in }
+jupyter: python3
+---
+
+# 1. Context & purpose
+
+The open finale: on a **new dataset**, pick a model, fit it by any sound method, **quantify
+uncertainty** with a Bayesian approach from **Unit 4 or Unit 5** (conjugate/predictive-variance,
+Laplace, or MCMC), and write a short report — what you found, how confident you are, and the
+**ethics/impact** of acting on it. There is **no answer key**; you are graded on *method validity*,
+*internal consistency*, *runnable code*, and the *quality of your reasoning*.
+
+# 2. Learning objectives
+
+| | Objective | Bloom | Bundle · spec |
+|---|-----------|-------|----------------|
+| **O1** | Fit a model that captures the signal | Apply | Correctness · V1 |
+| **O2** | Quantify uncertainty with a valid Bayesian method | Analyze | Correctness · V2, C1, C2 |
+| **O3** | Produce runnable, reproducible code to the contract | Apply | Correctness · R1 / Process |
+| **O4** | Interpret results (CERL) and assess ethics/impact | Evaluate/Create | Interpretation · I1, I2 |
+
+# 3. The task
+
+`data/capstone.csv` has inputs `x ∈ [-3, 3]` (with a **gap in [0.5, 2.0]**) and noisy outputs `t`.
+Implement the `BayesianModel` contract in `hw.py` (`fit`, `predict`, `predictive_std`,
+`posterior_cov`) **with the model and Bayesian method of your choice**, then write the report (§6).
+
+# 4. What you may / may not use
+
+Any model (linear/polynomial features, GP, logistic if you reframe it) and any Bayesian
+uncertainty method from Units 4–5. **Seed** any RNG. You may not hard-code outputs — the autograder
+checks *properties of your method*, not a specific number.
+
+# 5. How you'll be assessed (criteria up front)
+
+Specifications grading (`specs.md`), **adapted for an open task**: because there is no reference
+answer, **Correctness specs assess method validity + internal consistency + runnable code** — not a
+pinned value. Interpretation is CERL on your results **and the ethics report**; Process as usual.
+Any unmet bundle → one revise-and-resubmit.
+
+---
+
+## Reference approach (ONE valid example — yours may differ)
+
+Bayesian linear regression with polynomial features and a Gaussian prior gives a closed-form
+posterior $\mathbf{w}\sim\mathcal N(\boldsymbol\mu,\boldsymbol\Sigma)$ with
+$\boldsymbol\Sigma=(\alpha\mathbf I+\beta\mathbf X^\top\mathbf X)^{-1}$,
+$\boldsymbol\mu=\beta\boldsymbol\Sigma\mathbf X^\top\mathbf t$, and predictive variance
+$\mathrm{var}[t_*]=\tfrac1\beta+\mathbf x_*^\top\boldsymbol\Sigma\,\mathbf x_*$ — which **grows away
+from the data** (the §C1 property).
+
+```{python}
+#| label: fig-capstone
+#| fig-cap: "Reference fit with ±2σ predictive band; uncertainty widens across the data gap and beyond."
+import numpy as np, matplotlib.pyplot as plt
+from hw import BayesianModel, load_data
+
+x, t = load_data()
+m = BayesianModel().fit(x, t)
+xq = np.linspace(-3.5, 4.5, 300)
+mu, sd = m.predict(xq), m.predictive_std(xq)
+fig, ax = plt.subplots(figsize=(5.2, 3.2))
+ax.scatter(x, t, s=8, c="k", label="data")
+ax.plot(xq, mu, "C0", label="posterior mean")
+ax.fill_between(xq, mu - 2*sd, mu + 2*sd, color="C0", alpha=0.2, label="±2σ")
+ax.axvspan(0.5, 2.0, color="gray", alpha=0.12); ax.legend(fontsize=7)
+ax.set_xlabel("x"); ax.set_ylabel("t"); plt.tight_layout(); plt.show()
+print("posterior_cov PSD:", np.all(np.linalg.eigvalsh(np.asarray(m.posterior_cov())) > 0))
+```
+
+# 6. Required report (CERL + ethics)
+
+Write ~1 page. **I1 (results, CERL):** what does your model say; cite the fit and the uncertainty
+(where is it large/small and *why*); state the real limits (the data gap, extrapolation, model
+mis-specification). **I2 (ethics/impact):** if a decision were made from these predictions, who is
+affected by the *uncertainty* — and what would acting on the over-confident regions risk? Name one
+safeguard.
+
+::: {.callout-note appearance="minimal"}
+**Your report (I1 results · I2 ethics):**  `%%% YOUR ANSWER HERE %%%`
+:::
+
+# 7–8. Going further & submission
+
+Going further: compare two uncertainty methods (e.g. closed-form predictive variance vs MCMC) and
+discuss where they agree/disagree (the Unit-5 "four ways" idea). Submission: autograder imports
+`BayesianModel`, `load_data` from `hw`; `import hw` cheap; **seed** any RNG; render with
+`quarto render capstone.qmd` (Typst, no TeX).
