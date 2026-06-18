@@ -1,0 +1,113 @@
+---
+title: "Unit 4 — Bayesian Inference, Exact & Conjugate"
+subtitle: "Predictive variance · the exact coin-game posterior (Beta–Binomial) · Inverse-Gamma conjugacy"
+format:
+  typst:
+    papersize: us-letter
+    margin: { x: 1.25in, y: 1in }
+jupyter: python3
+---
+
+# 1. Context & purpose
+
+Three faces of exact Bayesian inference: **error bars** from the predictive variance of a
+regression model; the **exact posterior** of a coin's bias by Beta–Binomial **conjugacy**; and the
+**Inverse-Gamma** conjugate prior on a regression's **noise variance** — which closes the loop back
+to Unit 1's Olympic model. The thread: what conjugacy buys, and where it stops.
+
+# 2. Learning objectives
+
+| | Objective | Bloom | Bundle · spec |
+|---|-----------|-------|----------------|
+| **O1** | Compute the parameter covariance and predictive variance (error bars) | Apply | Correctness · A1–A3 |
+| **O2** | Derive/implement the exact Beta–Binomial posterior + marginal likelihood | Apply | Correctness · B1–B5 |
+| **O3** | Derive the Inverse-Gamma conjugate posterior for the noise variance | Analyze | Correctness · D1 (per-step) |
+| **O4** | Interpret error bars, prior sensitivity, and what conjugacy buys | Evaluate | Interpretation · I1–I3 |
+
+# 3–5. Task, allowed approaches, assessment
+
+Implement the predictive variance and the coin-game posterior (any correct method passes —
+property/relationship checks, no brittle array pins); derive the Inverse-Gamma posterior.
+Specifications grading (`specs.md`): **Correctness (gateway) mixes autograded code (hw10, hw11)
+and a human per-step derivation (hw12 Inverse-Gamma)**. Interpretation + Process are separate;
+any unmet bundle → one revise-and-resubmit.
+
+---
+
+## Part A — Predictive variance (error bars)  *(autograded)*
+
+For a polynomial fit, $\mathrm{cov}\{\widehat{\mathbf w}\}=\widehat{\sigma}^2(\mathbf X^\top\mathbf X)^{-1}$
+and $\mathrm{var}\{t_\text{new}\}=\mathbf x_\text{new}^\top\,\mathrm{cov}\{\widehat{\mathbf w}\}\,\mathbf x_\text{new}$.
+
+```{python}
+#| label: fig-errorbars
+#| fig-cap: "Predictive error bars grow in the data gap (2.5–4.5) and at the edges."
+import numpy as np, matplotlib.pyplot as plt
+from hw import (PolynomialRegressionModel, generate_synthetic_data, posterior, Beta,
+                calculate_marginal_likelihood, calculate_probability_of_winning)
+
+rng = np.random.default_rng(100)
+x, t = generate_synthetic_data(rng, 40, -2, 7, 6, 2.5, 4.5)
+m = PolynomialRegressionModel(3, x, t)
+xq = np.linspace(-2, 7, 50)
+fig, ax = plt.subplots(figsize=(5, 3))
+ax.errorbar(xq, m.predict(xq[:, None]).flatten(), yerr=m.predictive_variance(xq), alpha=0.5)
+ax.scatter(x, t, s=6, c="k"); ax.set_xlabel("x"); ax.set_ylabel("t"); plt.tight_layout(); plt.show()
+```
+
+## Part B — The exact coin-game posterior  *(autograded)*
+
+A Beta$(a,b)$ prior on the bias $r$ and $y_N$ heads in $N$ tosses give, by **conjugacy**, the exact
+posterior $\text{Beta}(a+y_N,\;b+N-y_N)$ — the prior pseudo-counts $a,b$ (Unit 2b) plus the data.
+
+```{python}
+r = np.linspace(0, 1, 100)
+N, y_N, a, b = 20, 13, 2.0, 3.0
+ax = plt.subplots(figsize=(5, 2.6))[1]
+ax.plot(r, Beta(r, a, b), "--", label="prior"); ax.plot(r, posterior(r, N, y_N, a, b), label="posterior")
+ax.legend(); ax.set_xlabel("r"); plt.tight_layout(); plt.show()
+print(f"marginal likelihood = {calculate_marginal_likelihood(N, y_N, a, b):.4f}")
+print(f"P(win)              = {calculate_probability_of_winning(N, y_N, a, b):.4f}")
+```
+
+## Part C — Inverse-Gamma conjugacy for the noise variance  *(derivation, per-step)*
+
+With $\mathbf w$ known and an Inverse-Gamma$(\alpha,\beta)$ prior on $\sigma^2$, derive the posterior
+parameters $\alpha',\beta'$.
+
+::: {.callout-note appearance="minimal"}
+**Your derivation (D1):**  `%%% YOUR ANSWER HERE %%%`
+:::
+
+<!-- SOLUTION START -->
+::: {.callout-tip title="Reference (instructor)"}
+Posterior $\propto$ Gaussian likelihood $(\sigma^2)^{-D/2}\exp\!\big(\!-\tfrac{1}{2\sigma^2}\|\mathbf t-\mathbf{Xw}\|^2\big)$
+$\times$ IG prior $(\sigma^2)^{-\alpha-1}\exp(-\beta/\sigma^2)$. Collecting the $\sigma^2$-kernel:
+$(\sigma^2)^{-(\alpha+D/2)-1}\exp\!\big(\!-\tfrac{1}{\sigma^2}[\beta+\tfrac12\|\mathbf t-\mathbf{Xw}\|^2]\big)$,
+so it is again Inverse-Gamma with
+$\boxed{\alpha'=\alpha+\tfrac{D}{2},\quad \beta'=\beta+\tfrac12(\mathbf t-\mathbf{Xw})^\top(\mathbf t-\mathbf{Xw})}.$
+:::
+<!-- SOLUTION END -->
+
+> **Through-lines.** The Beta pseudo-counts (B) are the **Unit 2b** Beta moments in action; the
+> Inverse-Gamma posterior (C) puts a prior on the **noise variance of Unit 1's Olympic regression**
+> (it had treated $\sigma^2$ as known). Both are **conjugate updates**: prior family in → same family
+> out, parameters moved by the data's sufficient statistics.
+
+# 6. Required interpretation (CERL)
+
+- **I1.** What do the error bars show about where the model is (un)certain, and why?
+- **I2.** How **sensitive** is the coin posterior to the prior $(a,b)$ as $N$ grows — and what does
+  the marginal likelihood tell you about competing priors?
+- **I3.** What does **conjugacy** buy (exact, closed-form updates), and where does it stop?
+
+::: {.callout-note appearance="minimal"}
+**Your answers (I1–I3):**  `%%% YOUR ANSWER HERE %%%`
+:::
+
+# 7–8. Going further & submission
+
+Going further: vary $(a,b)$ and watch the posterior mean $\tfrac{a+y_N}{a+b+N}$ move. Submission:
+autograder imports `PolynomialRegressionModel, generate_synthetic_data, B, Beta, posterior,
+calculate_marginal_likelihood, calculate_probability_of_winning` from `hw` — keep signatures;
+`import hw` cheap. Render with `quarto render unit4.qmd` (Typst, no TeX).
