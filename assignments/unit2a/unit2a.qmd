@@ -1,0 +1,147 @@
+---
+title: "Unit 2a — Probability & Estimation Foundations (I)"
+subtitle: "Poisson probabilities · Bernoulli MLE · Fisher information"
+format:
+  typst:
+    papersize: us-letter
+    margin: { x: 1.25in, y: 1in }
+jupyter: python3
+---
+
+# 1. Context & purpose
+
+Three foundations of estimation, with a through-line: a **distribution** (Poisson), the
+**maximum-likelihood estimator** of a Bernoulli rate, and the **Fisher information** that
+sets the variance floor of that estimator. Part C closes the loop on Part B — the MLE's
+variance *is* the Cramér–Rao bound `1/(N·I(r))`.
+
+# 2. Learning objectives
+
+| | Objective | Bloom | Bundle · spec |
+|---|-----------|-------|----------------|
+| **O1** | Compute Poisson probabilities + their complement | Apply | Correctness · A1–A3 (autograded) |
+| **O2** | Derive the Bernoulli MLE `r̂ = (Σxₙ)/N` (likelihood → unique max → solve) | Apply/Analyze | Correctness · B1–B3 (per-step, human) |
+| **O3** | Derive the Fisher information `I(r)=1/(r(1−r))` | Analyze | Correctness · C1–C4 (per-step, human) |
+| **O4** | Interpret each result (estimator behavior, informativeness, limits) | Evaluate | Interpretation · I1–I3 |
+
+# 3. The task
+
+(A) Implement the Poisson pmf and the two probabilities; (B) derive the Bernoulli MLE; (C)
+derive the Fisher information. **Any valid derivation route earns full credit** (e.g. the
+score-variance form of `I(r)`).
+
+# 4. What you may / may not use
+
+Part A: standard-library `math` only. Parts B–C: any valid derivation; state assumptions
+(i.i.d., `r∈(0,1)`). No hard-coded numbers in Part A.
+
+# 5. How you'll be assessed (criteria up front)
+
+Specifications grading — see `specs.md`. **Correctness is the core/gateway bundle and holds
+*both* kinds of spec**: Part A is autograded by `test_hw.py`; Parts B–C are graded **per
+step** by a human (each step met when it reaches *Proficient+*). Interpretation (I1–I3, CERL)
+and Process are their own bundles. Any unmet bundle → one revise-and-resubmit.
+
+---
+
+## Part A — Poisson probabilities  *(autograded)*
+
+For $X \sim \text{Poisson}(\lambda=3)$, $P(X=x)=\dfrac{\lambda^x}{x!}e^{-\lambda}$. Implement
+`poisson`, then $P(2\le X\le 6)$ and its complement.
+
+```{python}
+import math, numpy as np, matplotlib.pyplot as plt
+from hw import poisson, calculate_poisson_pmf_a, calculate_poisson_pmf_b
+
+a, b = calculate_poisson_pmf_a(), calculate_poisson_pmf_b()
+print(f"P(2 <= X <= 6) = {a:.6f}")
+print(f"P(X < 2 or X > 6) = {b:.6f}   (a + b = {a + b:.6f})")
+```
+
+```{python}
+#| label: fig-poisson
+#| fig-cap: "Poisson(3) pmf; the shaded mass is P(2 ≤ X ≤ 6)."
+xs = np.arange(0, 13)
+pmf = [poisson(int(x), 3) for x in xs]
+fig, ax = plt.subplots(figsize=(5, 2.6))
+ax.bar(xs, pmf, color=["#c0392b" if 2 <= x <= 6 else "#bdc3c7" for x in xs])
+ax.set_xlabel("x"); ax.set_ylabel("P(X=x)"); plt.tight_layout(); plt.show()
+```
+
+## Part B — Maximum-likelihood estimator of a Bernoulli rate  *(derivation, per-step)*
+
+Given i.i.d. $x_1,\dots,x_N \in \{0,1\}$ from $\text{Bernoulli}(r)$, derive the MLE $\hat r$.
+**Show: (B1) the likelihood, (B2) that the stationary point is a unique maximum, (B3) the
+solution.**
+
+::: {.callout-note appearance="minimal"}
+**Your derivation (B1–B3):**  `%%% YOUR ANSWER HERE %%%`
+:::
+
+<!-- SOLUTION START -->
+::: {.callout-tip title="Reference derivation (instructor)"}
+**B1 — Likelihood (independence).**
+$$ L(r)=\prod_{n=1}^N r^{x_n}(1-r)^{1-x_n}, \qquad
+\log L = \sum_{n=1}^N\big[x_n\log r+(1-x_n)\log(1-r)\big]. $$
+
+**B2 — Unique maximum.** $\dfrac{\partial \log L}{\partial r}=\dfrac{\sum_n x_n}{r}-\dfrac{N-\sum_n x_n}{1-r}$,
+and $\dfrac{\partial^2 \log L}{\partial r^2}=-\dfrac{\sum_n x_n}{r^2}-\dfrac{N-\sum_n x_n}{(1-r)^2}<0$
+for $r\in(0,1)$ — strictly concave, so any stationary point is the unique maximum.
+
+**B3 — Solve.** Setting the score to zero, $(1-r)\sum_n x_n=r\,(N-\sum_n x_n)\Rightarrow
+\boxed{\;\hat r=\dfrac{1}{N}\sum_{n=1}^N x_n\;}$ — the sample proportion of 1s.
+:::
+<!-- SOLUTION END -->
+
+## Part C — Fisher information of the Bernoulli  *(derivation, per-step)*
+
+Derive $I(r)$ for a single $\text{Bernoulli}(r)$ observation. **Show: (C1) the definition,
+(C2) the score, (C3) the curvature, (C4) the expectation → closed form.**
+
+::: {.callout-note appearance="minimal"}
+**Your derivation (C1–C4):**  `%%% YOUR ANSWER HERE %%%`
+:::
+
+<!-- SOLUTION START -->
+::: {.callout-tip title="Reference derivation (instructor)"}
+**C1 — Definition.** $I(r)=\mathbb{E}\!\left[-\dfrac{\partial^2 \log p(Y\mid r)}{\partial r^2}\right]$
+(equivalently the score variance $\mathbb{E}[(\partial_r\log p)^2]$).
+
+**C2 — Score.** $\log p=y\log r+(1-y)\log(1-r)$, so
+$\partial_r\log p=\dfrac{y}{r}-\dfrac{1-y}{1-r}$.
+
+**C3 — Curvature.** $\partial_r^2\log p=-\dfrac{y}{r^2}-\dfrac{1-y}{(1-r)^2}$.
+
+**C4 — Expectation.** Using $\mathbb{E}[Y]=r$:
+$I(r)=\dfrac{r}{r^2}+\dfrac{1-r}{(1-r)^2}=\dfrac1r+\dfrac1{1-r}=\boxed{\;\dfrac{1}{r(1-r)}\;}.$
+:::
+<!-- SOLUTION END -->
+
+> **Through-line (B → C).** The Cramér–Rao bound for $N$ i.i.d. observations is
+> $\mathrm{Var}(\hat r)\ge \dfrac{1}{N\,I(r)}=\dfrac{r(1-r)}{N}$ — exactly the variance of the
+> sample-proportion MLE from Part B, which therefore **attains** the bound. This Bernoulli/Beta
+> machinery returns in **Unit 4** (conjugate priors) and **Unit 5** (Bayesian logistic regression).
+
+# 6. Required interpretation (CERL — Claim / Evidence / Reasoning / Limits)
+
+*An LLM may pre-grade against the 0–3 × 4 rubric; a human confirms and is final.*
+
+- **I1.** What does $P(2\le X\le 6)=0.767$ mean, and why is the complement valid?
+- **I2.** Why is $\hat r$ the **sample proportion**, and when is it misleading (small $N$;
+  all-identical data ⇒ $\hat r\in\{0,1\}$)?
+- **I3.** Where is $I(r)$ largest/smallest, and what does that say about how informative one
+  observation is about $r$?
+
+::: {.callout-note appearance="minimal"}
+**Your answers (I1–I3):**  `%%% YOUR ANSWER HERE %%%`
+:::
+
+# 7. Going further (optional)
+
+Show the Fisher information for $N$ observations is $N/(r(1-r))$ and connect it to I2.
+
+# 8. Submission & reproducibility
+
+Autograder imports `poisson`, `calculate_poisson_pmf_a`, `calculate_poisson_pmf_b` from `hw`
+— keep signatures, `math` only. Derivations are written (rendered in this `.qmd`). Run
+`pytest`; render with `quarto render unit2a.qmd` (Typst, no TeX).

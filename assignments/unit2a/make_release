@@ -1,0 +1,8 @@
+#!/bin/sh
+# Unit 2a release: strip code solutions AND derivation solutions; ship prompt + specs + tests.
+rm -rf release && mkdir -p release
+sed '/^ *### SOLUTION START ###/,/^ *### SOLUTION END ###/d' hw.py > release/hw.py
+# Strip the reference derivations from the .qmd (between the HTML-comment markers).
+sed '/<!-- SOLUTION START -->/,/<!-- SOLUTION END -->/d' unit2a.qmd > release/unit2a.qmd
+cp test_hw.py specs.md release/
+cp ../unit1/requirements.txt release/ 2>/dev/null || true
