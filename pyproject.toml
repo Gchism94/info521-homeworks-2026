@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "info521"
+version = "0.1.0"
+description = "Shared plumbing for INFO 521 — seeded RNG, data loaders, plotting style, and test helpers. Contains NO assessed content."
+readme = "docs/INFO521_LIBRARY_PROPOSAL.md"
+# This package is the single source of truth for the numpy / Python pin:
+# numpy 2.1.x ships no cp314 wheels, so Python is capped at 3.13.
+requires-python = ">=3.11,<3.14"
+dependencies = [
+    "numpy==2.1.*",
+    "matplotlib",
+]
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+info521 = ["py.typed"]
