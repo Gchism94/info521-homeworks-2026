@@ -1,0 +1,81 @@
+---
+title: "Unit 2b — Probability & Estimation Foundations (II)"
+subtitle: "Matrix calculus (Jacobian identities) · Gaussian independence · MLE unbiasedness · Beta moments"
+engine: markdown
+---
+
+## Overview
+
+This is the **written, derivation-only** unit that proves the results the rest of the course
+relies on. You'll derive the matrix-calculus gradient identities — the ones **Unit 1 already
+applied** to get the normal equation — and then a short tour of distributional facts: that a
+diagonal-covariance Gaussian factorizes into independent pieces, that the Bernoulli MLE is
+unbiased, and the mean and variance of the Beta distribution. Nothing is coded; everything is
+shown.
+
+## Learning objectives
+
+By the end of Unit 2b you will be able to:
+
+- **Derive the Jacobian identities** $\partial\mathbf{w}/\partial\mathbf{w}=\mathbf I$,
+  $\partial f/\partial\mathbf{w}^\top=(\partial f/\partial\mathbf{w})^\top$, and
+  $\partial(\mathbf{Cw})/\partial\mathbf{w}^\top=\mathbf C$. *(Apply/Analyze)*
+- **Show a diagonal-covariance Gaussian** factorizes into independent univariate Gaussians.
+  *(Analyze)*
+- **Prove the Bernoulli MLE is unbiased**, $\mathbb{E}[\hat r]=r$. *(Apply)*
+- **Derive the Beta mean and variance.** *(Analyze)*
+- **Interpret**: where symmetry matters, what unbiasedness does and does not guarantee, and
+  why the Beta is a natural prior. *(Evaluate)*
+
+## What you'll do
+
+Derive seven results across two parts:
+
+- **Part A** — the three matrix-calculus (Jacobian) identities, from the component /
+  Kronecker-delta definitions.
+- **Part B** — the diagonal-Gaussian independence factorization, the unbiasedness of the
+  Bernoulli MLE, and the Beta$(\alpha,\beta)$ mean and variance (using $\Gamma(n+1)=n\,\Gamma(n)$).
+
+Then answer three interpretation questions. **Any valid route earns full credit**; state every
+assumption (symmetry of $\mathbf C$; i.i.d. and $\mathbb{E}[x_n]=r$; $\alpha,\beta>0$).
+
+## Prerequisites & connections
+
+**Review first.** Vector/matrix notation and partial derivatives; the Gaussian and Beta
+density forms; expectation and variance; the gamma identity $\Gamma(n+1)=n\,\Gamma(n)$.
+Helpful: Unit 2a's MLE (Part B builds on it).
+
+**Connections.**
+
+> This is the **proof** half of Unit 1's *use-then-prove* arc: the identities you derive in
+> Part A are exactly the ones Unit 1 applied to reach
+> $\widehat{\mathbf{w}}=(\mathbf{X}^\top\mathbf{X})^{-1}\mathbf{X}^\top\mathbf{t}$, and identity
+> A3 reappears as the **Hessian term in Unit 5**. The Beta mean and variance become the
+> **conjugate Beta prior of Unit 4**.
+
+## How it's graded
+
+This unit is **written-only**, so the entire **Correctness** (core/gateway) bundle is graded
+**step-by-step by a human** — there is no autograder (the shared classroom config skips
+`pytest` when there is no `test_hw.py`). Each derivation step passes at *Proficient* or better.
+**Interpretation** scores your CERL answers (Claim, Evidence, Reasoning, Limits) and
+**Process** covers consistent notation, stated assumptions, and a clean render. Any unmet
+bundle gets one **revise-and-resubmit**. Full policy in [`GRADING.md`](../GRADING.md).
+
+## What to submit
+
+- Your **derivation write-ups** — Part A (A1–A3) and Part B (B1–B4), rendered in the unit,
+  with every assumption stated. *(This is a written unit — no code or autograder.)*
+- Your **interpretation answers** (I1–I3).
+
+*Submit via the course page — [submit mechanism TBD].*
+
+## Deadline & revision window
+
+- Due: **[PLACEHOLDER]**
+- Post-feedback revision window: **[PLACEHOLDER]**
+
+## Estimated effort
+
+Roughly **4–6 hours [PROPOSED]** — seven derivations, all on paper; the work is in being
+rigorous and stating assumptions, not in volume.

@@ -1,0 +1,86 @@
+---
+title: "Unit 4 — Bayesian Inference, Exact & Conjugate"
+subtitle: "Predictive variance · the exact coin-game posterior (Beta–Binomial) · Inverse-Gamma conjugacy"
+engine: markdown
+---
+
+## Overview
+
+This unit is exact Bayesian inference — closed-form posteriors, no approximation yet. You'll
+put **error bars** on a regression model via its predictive variance, compute the **exact
+posterior** of a coin's bias from a Beta prior and observed tosses (Beta–Binomial
+**conjugacy**), and derive the **Inverse-Gamma** conjugate posterior for a regression's noise
+variance — which closes the loop back to Unit 1's model, where the noise was treated as known.
+The thread throughout: what conjugacy buys you, and where it stops.
+
+## Learning objectives
+
+By the end of Unit 4 you will be able to:
+
+- **Compute the parameter covariance and predictive variance** (error bars) for a polynomial
+  fit. *(Apply)*
+- **Derive and implement the exact Beta–Binomial posterior** and its marginal likelihood.
+  *(Apply)*
+- **Derive the Inverse-Gamma conjugate posterior** for the noise variance. *(Analyze)*
+- **Interpret** error bars, prior sensitivity, and what conjugacy buys. *(Evaluate)*
+
+## What you'll do
+
+Three parts:
+
+- **(A) Predictive variance** *(code)* — on a synthetic regression dataset with a deliberate
+  data gap, compute the parameter covariance
+  $\mathrm{cov}\{\widehat{\mathbf{w}}\}=\widehat\sigma^2(\mathbf X^\top\mathbf X)^{-1}$ and the
+  predictive variance, and plot **error bars** that widen in the gap and at the edges.
+- **(B) The coin-game posterior** *(code)* — with a Beta$(a,b)$ prior on the bias and $y_N$
+  heads in $N$ tosses, compute the exact conjugate posterior
+  $\text{Beta}(a+y_N,\,b+N-y_N)$, its marginal likelihood, and the probability of winning.
+- **(C) Inverse-Gamma conjugacy** *(derivation)* — derive the posterior parameters for the
+  noise variance.
+
+Then answer three interpretation questions. **Any correct method passes** — the checks are
+properties and relationships, not brittle array values.
+
+## Prerequisites & connections
+
+**Review first.** The matrix linear model and design matrix from Unit 1; the Beta distribution
+and its moments from Unit 2b; basic Bayesian vocabulary (prior, likelihood, posterior).
+
+**Connections.**
+
+> The Beta pseudo-counts here are the **Unit 2b Beta moments in action**, and the
+> Inverse-Gamma part puts a prior on the **noise variance of Unit 1's Olympic regression**
+> (which had treated $\sigma^2$ as known). Both are **conjugate updates** — prior family in,
+> same family out — and these exact posteriors become the targets that **Unit 5 approximates**
+> when conjugacy runs out.
+
+## How it's graded
+
+Three bundles, specifications not points. **Correctness** (core/gateway) mixes **autograded**
+code checks (predictive variance and the coin posterior — property and relationship tests, no
+brittle pins) with one **human-graded derivation** (the Inverse-Gamma posterior).
+**Interpretation** scores your CERL answers (Claim, Evidence, Reasoning, Limits) and
+**Process** covers a cheap import and a clean render. Any unmet bundle gets one
+**revise-and-resubmit**; autograded resubmissions are unlimited until the deadline. Full policy
+in [`GRADING.md`](../GRADING.md).
+
+## What to submit
+
+- Your completed **`hw.py`** — `PolynomialRegressionModel`, `generate_synthetic_data`, `B`,
+  `Beta`, `posterior`, `calculate_marginal_likelihood`, `calculate_probability_of_winning`
+  (signatures unchanged).
+- Your **derivation write-up** — the Inverse-Gamma conjugate posterior (D1).
+- Your **rendered notebook** with the error-bar and posterior figures and interpretation
+  answers (I1–I3).
+
+*Submit via the course page — [submit mechanism TBD].*
+
+## Deadline & revision window
+
+- Due: **[PLACEHOLDER]**
+- Post-feedback revision window: **[PLACEHOLDER]**
+
+## Estimated effort
+
+Roughly **5–7 hours [PROPOSED]** — two coded parts plus one derivation; the predictive-variance
+bookkeeping and the conjugacy reasoning take the most time.

@@ -1,0 +1,96 @@
+---
+title: "Unit 1 — Linear Models & Model Selection"
+subtitle: "One dataset, three fits: scalar least squares → matrix normal equations → cross-validated polynomial"
+engine: markdown
+---
+
+## Overview
+
+Linear models are the foundation of statistical machine learning, and the clearest way to
+meet them is on a real trend you can see. In this unit you'll model a genuine time series —
+the **men's Olympic 100 m winning times** (1896 onward) — and fit it three increasingly
+general ways, watching one idea, *least squares*, carry from a two-number scalar formula all
+the way to a cross-validated polynomial. By the end you'll have built the regression machinery
+the rest of the course depends on, and seen first-hand why choosing a model is a question you
+answer with data, not taste.
+
+## Learning objectives
+
+By the end of Unit 1 you will be able to:
+
+- **Fit a scalar least-squares line** $t \approx w_0 + w_1 x$ by the closed-form normal
+  equations. *(Apply)*
+- **Fit the same model in matrix form**, $\mathbf{w} = (\mathbf{X}^\top\mathbf{X})^{-1}\mathbf{X}^\top\mathbf{t}$,
+  *applying* the matrix-calculus gradient identities. *(Apply)*
+- **Build polynomial features** with correct scaling to $[0, 1]$. *(Apply)*
+- **Select the model order by cross-validation.** *(Analyze)*
+- **Interpret the result** — the CV curve in bias–variance terms, the limits of
+  extrapolation, and when cross-validation can mislead. *(Evaluate)*
+
+## What you'll do
+
+You'll fit the Olympic 100 m data three ways, each deepening the last:
+
+- **(A) Scalar least squares** — the two-parameter line $t \approx w_0 + w_1 x$, in closed
+  form.
+- **(B) The matrix normal equation** — the same fit written with a design matrix
+  $\mathbf{X} = [\,\mathbf{1}\ \ \mathbf{x}\,]$. At order 1 it **must agree with Part A
+  exactly** (both predict ≈ **9.59 s** for 2012) — that agreement is the through-line that
+  ties the unit together.
+- **(C) Polynomial features + cross-validation** — add higher-order columns, scale to
+  $[0, 1]$, and let **5-fold cross-validation** choose the order (scaling each fold *after*
+  the split, so no information leaks).
+
+Then write three short interpretation answers: which order CV chose and why, what the curves
+say about overfitting, and one situation where CV here could mislead. Any sound method earns
+full credit — the closed-form normal equations, `np.linalg.lstsq`, or `np.polyfit` — but
+**seed the CV shuffle** (`np.random.default_rng(0)`) and don't hard-code the target numbers.
+
+## Prerequisites & connections
+
+**Review first.** NumPy array basics and linear algebra — matrix multiply, transpose, and
+solving a linear system (`np.linalg.solve`); and mean-squared error as a loss. Unit 0
+(onboarding) should be passed before you start.
+
+**Connections.**
+
+> Part B **applies** the matrix-calculus gradient identities
+> $\nabla_{\mathbf{w}}(\mathbf{w}^\top\mathbf{a}) = \mathbf{a}$ and
+> $\nabla_{\mathbf{w}}(\mathbf{w}^\top\mathbf{C}\mathbf{w}) = 2\mathbf{C}\mathbf{w}$ to reach
+> the normal equation. You **use them here; you prove them in Unit 2b**, which derives those
+> identities in general — a deliberate *use-then-prove* arc.
+
+The design-matrix thinking and the cross-validation workflow you build here carry forward into
+the model-selection and Bayesian units later in the course.
+
+## How it's graded
+
+This unit is graded by **specifications, not points**. Your work is checked against three
+bundles — **Correctness** (autograded method-validity and outcome checks), **Interpretation**
+(your written CERL answers: Claim, Evidence, Reasoning, Limits), and **Process**
+(reproducibility and the submission contract). Each bundle either passes or comes back once
+for **revise-and-resubmit**; the unit passes when all three do, and Correctness resubmissions
+are unlimited until the deadline. The full policy and the letter-grade ladder are in
+[`GRADING.md`](../GRADING.md) — read it once.
+
+## What to submit
+
+- Your completed **`hw.py`** — the implementations the autograder imports
+  (`SimpleLinearModel`, `PolynomialRegressionModel`, `scale`, `run_K_fold_cv`), with their
+  signatures unchanged.
+- Your **rendered notebook** — the unit's `.qmd` run top-to-bottom, including the
+  cross-validation figure and your I1–I3 interpretation answers.
+
+*Submit via the course page — [submit mechanism TBD].*
+
+## Deadline & revision window
+
+- Due: **[PLACEHOLDER]**
+- Post-feedback revision window: **[PLACEHOLDER]**
+
+## Estimated effort
+
+Roughly **6–9 hours [PROPOSED]** — this unit consolidates three former homeworks (scalar
+regression, matrix/polynomial regression, and scaling + cross-validation) into one connected
+arc, so most of the time goes into the Part C cross-validation and the written interpretations
+rather than into three separate setups.

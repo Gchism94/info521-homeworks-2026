@@ -1,0 +1,21 @@
+# Project config for the unit intros. Defines BOTH outputs from one source:
+#   - html  : self-contained single file (embed-resources) for D2L upload
+#   - typst : PDF (no TeX toolchain needed)
+# Brand/colors come from the shared _brand.yml (auto-applied to both formats).
+project:
+  type: default
+
+format:
+  html:
+    minimal: true               # no Bootstrap/Quarto JS -> small standalone file
+    css: intro.css              # compact shared brand theme (palette mirrors _brand.yml)
+    embed-resources: true       # -> one standalone .html, safe to upload to D2L
+    html-math-method: mathml    # native MathML: no MathJax CDN, truly offline-safe
+    toc: false
+  typst:
+    papersize: us-letter
+    margin:
+      x: 1.25in
+      y: 1in
+    fontsize: 11pt
+    include-in-header: _typst-accents.typ   # red heading-rule + blockquote accents

@@ -1,0 +1,83 @@
+---
+title: "Capstone — Open Bayesian Modelling with Uncertainty"
+subtitle: "Choose a model · fit it · quantify uncertainty · report results + ethics"
+engine: markdown
+---
+
+## Overview
+
+The capstone is the open finale: there is **no answer key**. On a new dataset you choose a
+model, fit it by any sound method, **quantify the uncertainty** with a Bayesian approach from
+Unit 4 or Unit 5, and write a short report on what you found, how confident you are, and the
+**ethics of acting on it**. You are graded not on hitting a number but on *method validity*,
+*internal consistency*, *runnable code*, and the *quality of your reasoning*.
+
+## Learning objectives
+
+By the end of the Capstone you will be able to:
+
+- **Fit a model** that captures the signal in the data. *(Apply)*
+- **Quantify uncertainty** with a valid Bayesian method. *(Analyze)*
+- **Produce runnable, reproducible code** to the contract. *(Apply)*
+- **Interpret your results (CERL)** and assess the **ethics/impact** of acting on them.
+  *(Evaluate/Create)*
+
+## What you'll do
+
+The dataset `data/capstone.csv` has inputs $x\in[-3,3]$ with a deliberate **gap in
+$[0.5, 2.0]$** and noisy outputs $t$. Implement the `BayesianModel` contract in `hw.py`
+(`fit`, `predict`, `predictive_std`, `posterior_cov`) **with the model and Bayesian method of
+your choice**, then write the report. Pick any uncertainty method you were taught — this is a
+menu, not a fence:
+
+- **Bayesian linear regression** — conjugate, closed-form posterior + predictive variance
+  (**Unit 4**).
+- **Laplace approximation** — a Gaussian fit at the MAP (**Unit 5**).
+- **MCMC posterior predictive** — propagate parameter draws through the model (**Unit 5**).
+
+Any valid method that **propagates parameter uncertainty** is acceptable. **Seed** any RNG, and
+don't hard-code outputs — the autograder checks *properties of your method*, not a specific
+value.
+
+## Prerequisites & connections
+
+**Review first.** The exact/conjugate methods of Unit 4 (predictive variance, Beta–Binomial)
+and the approximate methods of Unit 5 (Laplace, MCMC); how to propagate parameter uncertainty
+into a predictive band.
+
+**Connections.**
+
+> This synthesizes the Bayesian half of the course — any of the **Unit 4 / Unit 5** uncertainty
+> methods is fair game. In grading terms the Capstone **gates the A** (you need it on top of
+> all six core units) and elsewhere counts as one core unit of lift at the B/C boundaries.
+
+## How it's graded
+
+Specifications grading, **adapted for an open task**: because there is no reference answer, the
+**Correctness** (core/gateway) bundle assesses **method validity, internal consistency, and
+runnable code** — every spec passes for any sound Bayesian approach and fails a degenerate one.
+**Interpretation** is CERL on your results **and a required ethics note**; **Process** covers
+seeding and a clean render. Any unmet bundle gets one **revise-and-resubmit**. The Capstone also
+**gates the A** and can lift a borderline grade — full policy in [`GRADING.md`](../GRADING.md).
+
+## What to submit
+
+- Your completed **`hw.py`** — the `BayesianModel` contract (`fit`, `predict`,
+  `predictive_std`, `posterior_cov`) and `load_data` (signatures unchanged; any RNG seeded).
+- Your **report (~1 page)** — *I1 results* (the fit; where and why uncertainty is large or
+  small; your method's behaviour in the $[0.5, 2.0]$ gap and why it does or doesn't grow there;
+  the real limits) and *I2 ethics/impact* (who is affected by the uncertainty, what acting on
+  over-confident regions risks, and one safeguard).
+- Your **rendered notebook** with the ±2σ predictive-band figure.
+
+*Submit via the course page — [submit mechanism TBD].*
+
+## Deadline & revision window
+
+- Due: **[PLACEHOLDER]**
+- Post-feedback revision window: **[PLACEHOLDER]**
+
+## Estimated effort
+
+Roughly **8–12 hours [PROPOSED]** — open-ended: choosing and fitting a model, getting a valid
+uncertainty band, and writing a careful results-plus-ethics report.

@@ -1,0 +1,87 @@
+---
+title: "Unit 5 — Approximate Bayesian Inference"
+subtitle: "Four ways to one posterior: graphical model · MAP (Newton) · Laplace · MCMC"
+engine: markdown
+---
+
+## Overview
+
+This unit recovers **one** Bayesian posterior **four ways** and compares them. The model is
+logistic regression with a Gaussian prior on the weights, fit to a small two-feature
+binary-classification dataset. You'll draw its **graphical model**, find the **MAP** by
+Newton–Raphson, build the **Laplace** Gaussian approximation at the mode, and sample the
+posterior with **Metropolis–Hastings MCMC**. The payoff is the comparison — same posterior,
+four costs and accuracies — and one lesson that matters: the posterior **mode is not the
+mean**.
+
+## Learning objectives
+
+By the end of Unit 5 you will be able to:
+
+- **Draw the PGM** — nodes, edges, and plate, with $\sigma^2$ as a random-variable node.
+  *(Analyze)*
+- **Find the MAP** by Newton–Raphson. *(Apply)*
+- **Build the Laplace covariance** $(-\mathbf H)^{-1}$ at the mode. *(Apply)*
+- **Implement MH-MCMC** and recover the posterior. *(Apply/Analyze)*
+- **Derive** the Newton–Raphson (Poisson) and Laplace (Beta–Binomial) update rules. *(Analyze)*
+- **Verify the four methods agree**; compare cost and accuracy; explain mode vs mean.
+  *(Evaluate)*
+
+## What you'll do
+
+Recover one posterior five ways:
+
+- **Way 1 — graphical model** *(structure)* — draw the PGM and state the conditional
+  independence it encodes.
+- **Ways 2–4 — MAP, Laplace, MCMC** *(code)* — implement the MAP (Newton–Raphson), the Laplace
+  covariance $(-\mathbf H)^{-1}$, and a seeded Metropolis–Hastings sampler, then check they
+  agree (the MAP mode sits inside the MCMC bulk; Laplace matches the MCMC spread).
+- **Way 5 — derive the methods** *(derivation)* — the Newton update for a Poisson likelihood
+  and the Laplace approximation for a Beta–Binomial.
+
+Then answer three interpretation questions. **Any correct method passes** — tests are recovery,
+properties, and cross-method agreement, never pinned MCMC draws — so **seed your sampler**.
+
+## Prerequisites & connections
+
+**Review first.** The matrix-calculus identities and Hessian thinking from Unit 2b; the
+Gaussian prior and conjugacy ideas from Unit 4; gradients and optimization; seeded sampling
+(Unit 0).
+
+**Connections.**
+
+> This is where the threads meet: the **Hessian uses Unit 2b's identity A3**, the prior on
+> $\sigma^2$ comes from **Unit 4**, and the MCMC sampling extends **Unit 3's** estimate-by-drawing
+> idea. The MAP → Laplace → MCMC progression is the spine of approximate inference and the
+> toolkit you'll draw on in the **Capstone**.
+
+## How it's graded
+
+Three bundles, specifications not points. This unit's **Correctness** (core/gateway) is the
+largest in the course and combines four kinds of check: **autograded** (MAP, Laplace, MCMC, and
+cross-method agreement), **human structural** (the graphical model), and **human per-step
+derivation** (the two update rules). **Interpretation** scores your CERL answers (Claim,
+Evidence, Reasoning, Limits) and **Process** covers seeding, a cheap import, and a clean
+render. Any unmet bundle gets one **revise-and-resubmit**; autograded resubmissions are
+unlimited until the deadline. Full policy in [`GRADING.md`](../GRADING.md).
+
+## What to submit
+
+- Your completed **`hw.py`** — `logistic`, `gradient`, `hessian`, `newton_map`,
+  `laplace_covariance`, `MetropolisSampler` (signatures unchanged; sampler seeded).
+- Your **graphical model** and the conditional independence it encodes.
+- Your **derivation write-ups** — the Poisson Newton–Raphson update (D1) and the Beta–Binomial
+  Laplace approximation (D2).
+- Your **rendered notebook** with the four-ways figure and interpretation answers (I1–I3).
+
+*Submit via the course page — [submit mechanism TBD].*
+
+## Deadline & revision window
+
+- Due: **[PLACEHOLDER]**
+- Post-feedback revision window: **[PLACEHOLDER]**
+
+## Estimated effort
+
+Roughly **8–11 hours [PROPOSED]** — the largest core unit: a diagram, three estimators that
+must agree, and two derivations, plus the cross-method comparison.

@@ -1,0 +1,82 @@
+---
+title: "Unit 3 — Monte Carlo & Estimators"
+subtitle: "Analytic vs Monte-Carlo expectations · estimating π in 2-D/3-D/n-D · the curse of dimensionality"
+engine: markdown
+---
+
+## Overview
+
+This unit is about estimating things by **sampling** rather than solving. You'll approximate an
+expectation $\mathbb{E}[f(X)]$ two ways — analytically and by Monte Carlo — and estimate the
+constant $\pi$ by rejection sampling in two, three, and $n$ dimensions. The payoff is seeing
+the universal $O(1/\sqrt N)$ convergence of sampling estimators and the **curse of
+dimensionality**: as dimension grows, acceptance collapses, so the same accuracy costs
+exponentially more samples.
+
+## Learning objectives
+
+By the end of Unit 3 you will be able to:
+
+- **Compute $\mathbb{E}[f(X)]$ analytically** and approximate it by Monte Carlo. *(Apply)*
+- **Estimate $\pi$ by rejection sampling** in 2-D, 3-D, and $n$-D. *(Apply)*
+- **Demonstrate $O(1/\sqrt N)$ convergence** and the curse of dimensionality. *(Analyze)*
+- **Interpret** estimator variance vs sample size, and why higher dimensions are harder.
+  *(Evaluate)*
+
+## What you'll do
+
+Two halves, each combining code and a short derivation:
+
+- **(A) Monte-Carlo expectation** — for $X\sim U(-1,9)$ and a degree-4 polynomial $f$, estimate
+  $\mathbb{E}[f(X)]$ by averaging samples and watch it converge to the analytic value, which
+  you also derive (D1).
+- **(B) Estimating $\pi$** — recover $\pi$ from the accepted-sample fraction in the unit circle
+  (2-D), sphere (3-D), and $n$-ball, and derive the three estimator formulas (D2).
+
+Then answer two interpretation questions about convergence and the curse. **Any correct sampler
+passes** — the autograder checks convergence and distributional properties, never specific
+draws — so **seed your RNG**.
+
+## Prerequisites & connections
+
+**Review first.** Expectation and variance; definite integration (for the analytic value);
+NumPy array operations and random sampling with a seeded generator
+(`np.random.default_rng`). Unit 0's seed policy.
+
+**Connections.**
+
+> The **seed policy** from Unit 0 is graded here as a Process spec — every stochastic check is
+> reproducible. The sampling mindset you build (estimate by drawing, watch it converge) is the
+> foundation for the **MCMC posterior sampling in Unit 5**.
+
+## How it's graded
+
+Three bundles, specifications not points. **Correctness** (core/gateway) mixes **autograded**
+stochastic checks (convergence, distributional properties, floor-and-guard — never pinned
+draws) with **human-graded derivations** (the analytic expectation D1 and the $\pi$ formulas
+D2). **Interpretation** scores your CERL answers (Claim, Evidence, Reasoning, Limits) and
+**Process** covers seeding, a cheap import, and a clean render. Any unmet bundle gets one
+**revise-and-resubmit**; autograded resubmissions are unlimited until the deadline. Full policy
+in [`GRADING.md`](../GRADING.md).
+
+## What to submit
+
+- Your completed **`hw.py`** — `f`, `monte_carlo_expectation`, `running_expectation`,
+  `estimate_pi_using_circle` / `_sphere` / `_n_ball`, `number_of_orthants` (signatures
+  unchanged; RNG seeded).
+- Your **derivation write-ups** — the analytic expectation (D1) and the $\pi$ estimator
+  formulas (D2).
+- Your **rendered notebook** with the convergence / curse figures and interpretation answers
+  (I1–I2).
+
+*Submit via the course page — [submit mechanism TBD].*
+
+## Deadline & revision window
+
+- Due: **[PLACEHOLDER]**
+- Post-feedback revision window: **[PLACEHOLDER]**
+
+## Estimated effort
+
+Roughly **5–7 hours [PROPOSED]** — the estimators are short to code; the time goes into the
+$n$-D derivation, the convergence experiments, and the interpretations.

@@ -1,0 +1,78 @@
+---
+title: "Unit 0 — Tooling & Reproducibility"
+subtitle: "GitHub Classroom · pytest · the SOLUTION-marker workflow · the seed policy"
+engine: markdown
+---
+
+## Overview
+
+Before any modelling, you need a pipeline that just works. Unit 0 gets you set up
+end-to-end — clone the repo from GitHub Classroom, run the autograder with `pytest`, fill in a
+function behind the SOLUTION markers, render the unit, and commit and push. Nothing here is
+conceptually hard; the goal is a working toolchain and one habit — **seed every random number
+generator** — that every later unit assumes.
+
+## Learning objectives
+
+By the end of Unit 0 you will be able to:
+
+- **Run the autograder and fill a function** — implement `add` so `pytest` passes.
+- **Reproduce a random draw** — implement `seeded_draw` so the same seed gives the same
+  result (the *seed policy*).
+- **Use the math/LaTeX toolchain** — write the power-rule derivative and complete the week-1
+  checklist.
+- **Use the Git/Classroom workflow** — clone, commit, and push your work.
+
+## What you'll do
+
+Work through four small setup tasks:
+
+- **(1)** Implement `add` and confirm the autograder runs.
+- **(2)** Implement `seeded_draw` so a fixed seed reproduces the same draw — this is the
+  **seed policy** in one line.
+- **(3)** Complete the onboarding exercise — the power-rule derivative
+  $\frac{d}{dx}x^n = n\,x^{n-1}$ and the syllabus / academic-integrity checklist.
+- **(4)** Clone, commit, and push through GitHub Classroom, leaving the `### SOLUTION ###`
+  markers intact.
+
+There is no model to build and nothing to interpret here — just a pipeline that runs clean.
+
+## Prerequisites & connections
+
+**Review first.** A working Python install and a GitHub account, plus basic terminal use
+(clone, commit, push). No prior course content is assumed.
+
+**Connections.**
+
+> The **seed policy** you set up here is taught once and **assumed everywhere after** — Units
+> 3 and 5 grade it directly as a Process spec. An unseeded RNG makes results irreproducible
+> and un-gradeable, so build the habit now.
+
+## How it's graded
+
+Unit 0 is graded on **completion**, not correctness — it is the documented onboarding
+exception to the course's usual three-bundle scheme (there is no model to gate and nothing to
+interpret). Each of the four tasks is **complete / not-yet**, with one revise-and-resubmit,
+and the unit passes when all four are done. U0 is a required **completion floor**: it does not
+by itself raise your letter, but every grade above E depends on it. See
+[`GRADING.md`](../GRADING.md) for how it fits the ladder.
+
+## What to submit
+
+- Your completed **`hw.py`** — `add` and `seeded_draw`, with the `### SOLUTION ###` markers
+  left in place.
+- Your **onboarding work** — the power-rule derivative and the ticked week-1 checklist, in the
+  rendered unit.
+- Your **pushed repository** — committed and pushed through GitHub Classroom.
+
+*Submit via the course page — [submit mechanism TBD].*
+
+## Deadline & revision window
+
+- Due: **[PLACEHOLDER]**
+- Post-feedback revision window: **[PLACEHOLDER]**
+
+## Estimated effort
+
+Roughly **1–2 hours [PROPOSED]** — this is setup, not analysis; most of the time goes into
+installing the toolchain and confirming that the autograder and the push both work.

@@ -1,0 +1,26 @@
+# INFO 521 — shared UA-branded theme for the unit intros.
+# Single source of brand for BOTH outputs: HTML (for D2L) and Typst (PDF).
+# Reused by every unit intro — edit colors/typography here, not per-file.
+meta:
+  name: "INFO 521 Unit Intros"
+
+color:
+  palette:
+    cream: "#FAF7F0"   # warm page background
+    navy:  "#1B4F72"   # UA blue — primary
+    red:   "#AB0520"   # Arizona red — secondary / accent
+    green: "#2E7D32"   # success / accent
+    ink:   "#1A1A1A"   # dark, readable foreground
+  background: cream
+  foreground: ink
+  primary: navy
+  secondary: red
+  success: green
+
+typography:
+  headings:
+    color: navy
+    weight: 600
+  link:
+    color: navy
+    decoration: underline

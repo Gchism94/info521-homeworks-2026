@@ -1,0 +1,82 @@
+---
+title: "Unit 2a — Probability & Estimation Foundations (I)"
+subtitle: "Poisson probabilities · Bernoulli MLE · Fisher information"
+engine: markdown
+---
+
+## Overview
+
+This unit lays three foundations of estimation and ties them together. You'll work with a
+**Poisson distribution** (the probability of a count), the **maximum-likelihood estimator** of
+a Bernoulli success rate, and the **Fisher information** that sets how precisely that rate can
+be estimated. The through-line: the MLE's variance *is* the Cramér–Rao bound $1/(N\,I(r))$, so
+Part C tells you exactly how good the Part B estimator can be.
+
+## Learning objectives
+
+By the end of Unit 2a you will be able to:
+
+- **Compute Poisson probabilities** $P(X=x)=\lambda^x e^{-\lambda}/x!$ and a range probability
+  with its complement. *(Apply)*
+- **Derive the Bernoulli MLE** $\hat r = \frac1N\sum_n x_n$ — likelihood, unique maximum,
+  solution. *(Apply/Analyze)*
+- **Derive the Fisher information** $I(r) = 1/(r(1-r))$. *(Analyze)*
+- **Interpret** each result: how the estimator behaves, how informative one observation is,
+  and the limits. *(Evaluate)*
+
+## What you'll do
+
+Three parts:
+
+- **(A) Poisson probabilities** *(code)* — implement the Poisson pmf (standard-library `math`
+  only) and use it to compute $P(2\le X\le 6)$ for $\lambda=3$ and its complement.
+- **(B) Bernoulli MLE** *(derivation)* — for an i.i.d. binary sample, show the likelihood,
+  that the stationary point is a unique maximum (strict concavity), and the closed-form
+  solution.
+- **(C) Fisher information** *(derivation)* — for a single Bernoulli observation: definition,
+  score, curvature, expectation.
+
+Then answer three short interpretation questions. **Any valid derivation route earns full
+credit** (e.g. the score-variance form of $I(r)$); state your assumptions.
+
+## Prerequisites & connections
+
+**Review first.** Basic probability (pmf, expectation, independence), logarithms, and
+single-variable calculus (differentiate, find a maximum). For Part A, Unit 0's toolchain.
+
+**Connections.**
+
+> The Bernoulli/Beta machinery here returns throughout the course: the MLE's variance attains
+> the **Cramér–Rao bound** (Part C), the same estimator is proven **unbiased in Unit 2b**, and
+> the Bernoulli rate becomes a Bayesian quantity with a Beta prior in **Unit 4** and a logistic
+> model in **Unit 5**.
+
+## How it's graded
+
+This unit is graded by **specifications, not points**, against three bundles. Here
+**Correctness** (the core/gateway bundle) holds two kinds of check: Part A is **autograded** by
+`test_hw.py`, while the Part B and C **derivations are graded step-by-step by a human** (each
+step passes at *Proficient* or better). **Interpretation** scores your CERL answers (Claim,
+Evidence, Reasoning, Limits) and **Process** covers reproducibility and the submission
+contract. Any unmet bundle gets one **revise-and-resubmit**; autograded Correctness
+resubmissions are unlimited until the deadline. Full policy in [`GRADING.md`](../GRADING.md).
+
+## What to submit
+
+- Your completed **`hw.py`** — `poisson`, `calculate_poisson_pmf_a`,
+  `calculate_poisson_pmf_b` (signatures unchanged, `math` only).
+- Your **derivation write-ups** — the Bernoulli MLE (B1–B3) and the Fisher information
+  (C1–C4), rendered in the unit.
+- Your **interpretation answers** (I1–I3).
+
+*Submit via the course page — [submit mechanism TBD].*
+
+## Deadline & revision window
+
+- Due: **[PLACEHOLDER]**
+- Post-feedback revision window: **[PLACEHOLDER]**
+
+## Estimated effort
+
+Roughly **4–6 hours [PROPOSED]** — Part A is short; most of the time goes into the two
+derivations and writing clear interpretations.
