@@ -1,0 +1,26 @@
+# INFO 521 — environment dependencies.
+#
+# Python MUST be >=3.11,<3.14: numpy 2.1.x ships no cp314 wheel (the ABI bug that
+# motivated pinning the RNG/ABI surface). pyproject.toml is the single source of
+# truth for the numpy/matplotlib pins; the lines below mirror it.
+#
+# This file installs the *environment* only. Install the local package separately:
+#     pip install -e .
+# Do NOT add "-e ." here (its deps come from pyproject.toml).
+
+# ── runtime deps (from actual imports) ───────────────────────────────────────
+numpy==2.1.*        # mirrors pyproject; 2.1 ABI is the pinned surface
+scipy>=1.14         # scipy.special (U4 coin game); 1.14 is the first numpy-2.x line
+matplotlib          # mirrors pyproject (unpinned); figures in the unit notebooks
+sympy               # sympy.abc (U4 coin game); unpinned, but >=1.12 is required for Python 3.13
+
+# ── render toolchain (Quarto executes .qmd Python cells via Jupyter) ──────────
+# Without these, `quarto render` fails on every code-executing unit notebook.
+jupyter
+ipykernel
+nbclient
+nbformat
+
+# ── grading toolchain ────────────────────────────────────────────────────────
+pytest              # the autograders; also imported by info521.testing (pytest.approx)
+pylint              # referenced by per-unit + shared/requirements.txt
