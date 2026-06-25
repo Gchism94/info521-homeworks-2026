@@ -54,12 +54,16 @@ Any unmet bundle → one revise-and-resubmit.
 
 ## Reference approach (ONE valid example — yours may differ)
 
-Bayesian linear regression with polynomial features and a Gaussian prior gives a closed-form
-posterior $\mathbf{w}\sim\mathcal N(\boldsymbol\mu,\boldsymbol\Sigma)$ with
+*One valid example is conjugate **Bayesian linear regression** (Unit 4): a closed-form
+posterior whose predictive variance **grows away from the data** (the §C1 property). A Laplace
+or MCMC posterior (Unit 5) works just as well — see the method menu in §4.*
+
+<!-- SOLUTION START -->
+Concretely, BLR with polynomial features and a Gaussian prior gives a closed-form posterior
+$\mathbf{w}\sim\mathcal N(\boldsymbol\mu,\boldsymbol\Sigma)$ with
 $\boldsymbol\Sigma=(\alpha\mathbf I+\beta\mathbf X^\top\mathbf X)^{-1}$,
 $\boldsymbol\mu=\beta\boldsymbol\Sigma\mathbf X^\top\mathbf t$, and predictive variance
-$\mathrm{var}[t_*]=\tfrac1\beta+\mathbf x_*^\top\boldsymbol\Sigma\,\mathbf x_*$ — which **grows away
-from the data** (the §C1 property).
+$\mathrm{var}[t_*]=\tfrac1\beta+\mathbf x_*^\top\boldsymbol\Sigma\,\mathbf x_*$.
 
 ```{python}
 #| label: fig-capstone
@@ -79,6 +83,7 @@ ax.axvspan(0.5, 2.0, color="gray", alpha=0.12); ax.legend(fontsize=7)
 ax.set_xlabel("x"); ax.set_ylabel("t"); plt.tight_layout(); plt.show()
 print("posterior_cov PSD:", np.all(np.linalg.eigvalsh(np.asarray(m.posterior_cov())) > 0))
 ```
+<!-- SOLUTION END -->
 
 # 6. Required report (CERL + ethics)
 

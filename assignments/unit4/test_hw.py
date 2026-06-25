@@ -17,17 +17,29 @@ def _model(order=2):
     return PolynomialRegressionModel(order, x, t)
 
 
+# Reference values for the order-2 `_model()` on its seeded data, computed at authoring time
+# from the reference solution (deterministic under the numpy 2.1.x RNG/ABI pin). Pinned as
+# VALUES so the autograder checks correctness WITHOUT spelling out the expressions students
+# derive:  cov_w = sigma^2 (XtX)^-1   and   predictive_variance = diag(X cov_w X^T).
+COV_W_REF = np.array([[16.06301404, -9.78839918,  1.25492297],
+                      [-9.78839918,  6.87518514, -0.94119223],
+                      [ 1.25492297, -0.94119223,  0.13445603]])
+PRED_VAR_REF = np.array([8.39397807, 2.14177255, 1.86445699])   # predictive var at x = [0.5, 1.5, 4.0]
+
+
 # ---------- Part A: predictive variance ----------
 def test_cov_w_definition_psd():
-    m = _model(); X = m.X_train
-    assert m.compute_cov_w() == approx(m.sigma_sq * np.linalg.inv(X.T @ X))
-    cov = m.compute_cov_w()
+    """A1: parameter covariance has the correct VALUE (pinned reference) and is symmetric PSD
+    -- checks the value, not the sigma^2 (XtX)^-1 expression."""
+    cov = _model().compute_cov_w()
+    assert cov == approx(COV_W_REF, rel=1e-6)
     assert cov == approx(cov.T) and np.all(np.linalg.eigvalsh(cov) >= -1e-10)
 
 def test_predictive_variance_matches_cov_w():
-    m = _model(); cov = m.compute_cov_w()
-    xq = np.array([0.5, 1.5, 4.0]); Xn = m.get_design_matrix(xq)
-    assert m.predictive_variance(xq) == approx(np.diag(Xn @ cov @ Xn.T))
+    """A2: predictive variance has the correct VALUE (pinned reference) and is nonnegative
+    -- checks the value, not the diag(X cov_w X^T) expression."""
+    m = _model()
+    assert m.predictive_variance(np.array([0.5, 1.5, 4.0])) == approx(PRED_VAR_REF, rel=1e-6)
     assert np.all(m.predictive_variance(np.linspace(-2, 7, 20)) >= 0)
 
 def test_variance_larger_in_gap():

